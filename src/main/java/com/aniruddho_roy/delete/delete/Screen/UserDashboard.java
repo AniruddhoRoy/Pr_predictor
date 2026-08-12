@@ -2,6 +2,7 @@ package com.aniruddho_roy.delete.delete.Screen;
 
 import com.aniruddho_roy.delete.delete.additional.CONSTANTS;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
+import com.aniruddho_roy.delete.delete.additional.THEAME;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -10,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -21,12 +21,6 @@ public class UserDashboard extends BorderPane {
 
     private final NAVIGATOR navigator;
     private final boolean subscribed;
-
-    private static final String PRIMARY = "#2563EB";
-    private static final String DARK = "#0F172A";
-    private static final String MUTED = "#64748B";
-    private static final String BACKGROUND = "#F1F5F9";
-    private static final String GREEN = "#16A34A";
 
     /*
      * Use this constructor for a free user.
@@ -42,7 +36,7 @@ public class UserDashboard extends BorderPane {
         this.navigator = navigator;
         this.subscribed = subscribed;
 
-        setStyle("-fx-background-color: " + BACKGROUND + ";");
+        getStyleClass().addAll("app-screen", "dashboard-screen");
         setPadding(new Insets(20));
 
         HBox header = createHeader();
@@ -69,37 +63,34 @@ public class UserDashboard extends BorderPane {
 
         Label welcome = new Label("Hello, Aniruddho");
         welcome.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        welcome.setTextFill(Color.web(DARK));
+        welcome.getStyleClass().add("heading");
 
         Label description = new Label(
                 "Here is an overview of your pull-request predictions."
         );
         description.setFont(Font.font("Arial", 14));
-        description.setTextFill(Color.web(MUTED));
+        description.getStyleClass().add("muted-text");
 
         welcomeBox.getChildren().addAll(welcome, description);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        Button themeToggle = THEAME.createToggleButton();
         StackPane profilePicture = createProfilePicture();
 
         HBox header = new HBox(
                 15,
                 welcomeBox,
                 spacer,
+                themeToggle,
                 profilePicture
         );
 
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(15, 20, 15, 20));
 
-        header.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-background-radius: 14px;" +
-                        "-fx-border-color: #E2E8F0;" +
-                        "-fx-border-radius: 14px;"
-        );
+        header.getStyleClass().addAll("surface-card", "header-card");
 
         return header;
     }
@@ -107,15 +98,14 @@ public class UserDashboard extends BorderPane {
     private StackPane createProfilePicture() {
 
         Circle circle = new Circle(25);
-        circle.setFill(Color.web("#DBEAFE"));
-        circle.setStroke(Color.web(PRIMARY));
         circle.setStrokeWidth(2);
+        circle.getStyleClass().add("profile-circle");
 
         Label initials = new Label("AR");
-        initials.setTextFill(Color.web(PRIMARY));
         initials.setFont(
                 Font.font("Arial", FontWeight.BOLD, 15)
         );
+        initials.getStyleClass().add("profile-initials");
 
         StackPane profile = new StackPane(circle, initials);
         profile.setCursor(Cursor.HAND);
@@ -142,13 +132,13 @@ public class UserDashboard extends BorderPane {
         applicationName.setFont(
                 Font.font("Arial", FontWeight.BOLD, 19)
         );
-        applicationName.setTextFill(Color.web(PRIMARY));
+        applicationName.getStyleClass().add("app-title");
         applicationName.setWrapText(true);
         applicationName.setMaxWidth(170);
 
         Label applicationType = new Label("PR Intelligence");
-        applicationType.setTextFill(Color.web(MUTED));
         applicationType.setFont(Font.font("Arial", 12));
+        applicationType.getStyleClass().add("muted-text");
 
         VBox logoArea = new VBox(
                 3,
@@ -215,15 +205,7 @@ public class UserDashboard extends BorderPane {
         logoutButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setPrefHeight(42);
         logoutButton.setAlignment(Pos.CENTER_LEFT);
-
-        logoutButton.setStyle(
-                "-fx-background-color: #FEF2F2;" +
-                        "-fx-text-fill: #DC2626;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-padding: 0 15px;"
-        );
+        logoutButton.getStyleClass().add("logout-button");
 
         logoutButton.setOnAction(event -> {
             System.out.println("User logged out");
@@ -248,12 +230,7 @@ public class UserDashboard extends BorderPane {
         sidebar.setMinWidth(190);
         sidebar.setPadding(new Insets(20));
 
-        sidebar.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-background-radius: 14px;" +
-                        "-fx-border-color: #E2E8F0;" +
-                        "-fx-border-radius: 14px;"
-        );
+        sidebar.getStyleClass().addAll("surface-card", "sidebar-card");
 
         return sidebar;
     }
@@ -268,25 +245,11 @@ public class UserDashboard extends BorderPane {
         button.setPrefHeight(42);
         button.setAlignment(Pos.CENTER_LEFT);
         button.setCursor(Cursor.HAND);
-
-        if (selected) {
-            button.setStyle(
-                    "-fx-background-color: " + PRIMARY + ";" +
-                            "-fx-text-fill: white;" +
-                            "-fx-font-size: 14px;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-background-radius: 8px;" +
-                            "-fx-padding: 0 15px;"
-            );
-        } else {
-            button.setStyle(
-                    "-fx-background-color: transparent;" +
-                            "-fx-text-fill: " + DARK + ";" +
-                            "-fx-font-size: 14px;" +
-                            "-fx-background-radius: 8px;" +
-                            "-fx-padding: 0 15px;"
-            );
-        }
+        button.getStyleClass().add(
+                selected
+                        ? "menu-button-selected"
+                        : "menu-button"
+        );
 
         return button;
     }
@@ -300,13 +263,13 @@ public class UserDashboard extends BorderPane {
         heading.setFont(
                 Font.font("Arial", FontWeight.BOLD, 23)
         );
-        heading.setTextFill(Color.web(DARK));
+        heading.getStyleClass().add("heading");
 
         Label subheading = new Label(
                 "Monitor your prediction activity and account usage."
         );
         subheading.setFont(Font.font("Arial", 14));
-        subheading.setTextFill(Color.web(MUTED));
+        subheading.getStyleClass().add("muted-text");
 
         HBox summaryCards = new HBox(
                 12,
@@ -314,22 +277,19 @@ public class UserDashboard extends BorderPane {
                         "Total Predictions",
                         "48",
                         "All-time analyses",
-                        "#EFF6FF",
-                        "#2563EB"
+                        "stat-blue"
                 ),
                 createStatCard(
                         "High Probability",
                         "29",
                         "Above 70%",
-                        "#F0FDF4",
-                        "#16A34A"
+                        "stat-green"
                 ),
                 createStatCard(
                         "Average Probability",
                         "72%",
                         "All predictions",
-                        "#FFF7ED",
-                        "#EA580C"
+                        "stat-orange"
                 ),
                 createStatCard(
                         "Monthly Usage",
@@ -337,8 +297,7 @@ public class UserDashboard extends BorderPane {
                         subscribed
                                 ? "Premium account"
                                 : "52 remaining",
-                        "#FAF5FF",
-                        "#9333EA"
+                        "stat-purple"
                 )
         );
 
@@ -375,11 +334,9 @@ public class UserDashboard extends BorderPane {
         content.setPadding(new Insets(25));
         content.setMaxWidth(Double.MAX_VALUE);
 
-        content.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-background-radius: 14px;" +
-                        "-fx-border-color: #E2E8F0;" +
-                        "-fx-border-radius: 14px;"
+        content.getStyleClass().addAll(
+                "surface-card",
+                "dashboard-content"
         );
 
         ScrollPane scrollPane = new ScrollPane(content);
@@ -391,11 +348,7 @@ public class UserDashboard extends BorderPane {
                 ScrollPane.ScrollBarPolicy.AS_NEEDED
         );
 
-        scrollPane.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-background: transparent;" +
-                        "-fx-border-color: transparent;"
-        );
+        scrollPane.getStyleClass().add("transparent-scroll-pane");
 
         return scrollPane;
     }
@@ -407,26 +360,25 @@ public class UserDashboard extends BorderPane {
             String title,
             String value,
             String description,
-            String background,
-            String accentColor
+            String colorClass
     ) {
         Label titleLabel = new Label(title);
         titleLabel.setFont(
                 Font.font("Arial", FontWeight.BOLD, 12)
         );
-        titleLabel.setTextFill(Color.web(MUTED));
+        titleLabel.getStyleClass().add("muted-text");
         titleLabel.setWrapText(true);
 
         Label valueLabel = new Label(value);
         valueLabel.setFont(
                 Font.font("Arial", FontWeight.BOLD, 24)
         );
-        valueLabel.setTextFill(Color.web(accentColor));
+        valueLabel.getStyleClass().add("stat-value");
         valueLabel.setWrapText(true);
 
         Label descriptionLabel = new Label(description);
         descriptionLabel.setFont(Font.font("Arial", 11));
-        descriptionLabel.setTextFill(Color.web(MUTED));
+        descriptionLabel.getStyleClass().add("muted-text");
         descriptionLabel.setWrapText(true);
 
         VBox card = new VBox(
@@ -443,12 +395,7 @@ public class UserDashboard extends BorderPane {
 
         HBox.setHgrow(card, Priority.ALWAYS);
 
-        card.setStyle(
-                "-fx-background-color: " + background + ";" +
-                        "-fx-background-radius: 11px;" +
-                        "-fx-border-color: " + accentColor + "35;" +
-                        "-fx-border-radius: 11px;"
-        );
+        card.getStyleClass().addAll("stat-card", colorClass);
 
         return card;
     }
@@ -462,13 +409,13 @@ public class UserDashboard extends BorderPane {
         heading.setFont(
                 Font.font("Arial", FontWeight.BOLD, 18)
         );
-        heading.setTextFill(Color.web(DARK));
+        heading.getStyleClass().add("heading");
 
         Label description = new Label(
                 "Highlights generated from your prediction history"
         );
         description.setFont(Font.font("Arial", 12));
-        description.setTextFill(Color.web(MUTED));
+        description.getStyleClass().add("muted-text");
 
         GridPane grid = new GridPane();
         grid.setHgap(12);
@@ -494,29 +441,25 @@ public class UserDashboard extends BorderPane {
         VBox languageInsight = createInsightItem(
                 "Most Analyzed Language",
                 "Java",
-                "#EFF6FF",
-                "#2563EB"
+                "insight-blue"
         );
 
         VBox repositoryInsight = createInsightItem(
                 "Top Repository",
                 "spring-projects/spring",
-                "#F0FDF4",
-                "#16A34A"
+                "insight-green"
         );
 
         VBox highestInsight = createInsightItem(
                 "Highest Prediction",
                 "91% merge probability",
-                "#FFF7ED",
-                "#EA580C"
+                "insight-orange"
         );
 
         VBox trendInsight = createInsightItem(
                 "Recent Trend",
                 "Average score increased by 8%",
-                "#FAF5FF",
-                "#9333EA"
+                "insight-purple"
         );
 
         grid.add(languageInsight, 0, 0);
@@ -536,12 +479,7 @@ public class UserDashboard extends BorderPane {
         card.setPadding(new Insets(20));
         card.setMaxWidth(Double.MAX_VALUE);
 
-        card.setStyle(
-                "-fx-background-color: #F8FAFC;" +
-                        "-fx-background-radius: 12px;" +
-                        "-fx-border-color: #E2E8F0;" +
-                        "-fx-border-radius: 12px;"
-        );
+        card.getStyleClass().add("insights-card");
 
         return card;
     }
@@ -549,20 +487,19 @@ public class UserDashboard extends BorderPane {
     private VBox createInsightItem(
             String title,
             String value,
-            String background,
-            String accentColor
+            String colorClass
     ) {
         Label titleLabel = new Label(title);
         titleLabel.setFont(
                 Font.font("Arial", FontWeight.BOLD, 12)
         );
-        titleLabel.setTextFill(Color.web(MUTED));
+        titleLabel.getStyleClass().add("muted-text");
 
         Label valueLabel = new Label(value);
         valueLabel.setFont(
                 Font.font("Arial", FontWeight.BOLD, 14)
         );
-        valueLabel.setTextFill(Color.web(accentColor));
+        valueLabel.getStyleClass().add("insight-value");
         valueLabel.setWrapText(true);
 
         VBox item = new VBox(
@@ -575,10 +512,7 @@ public class UserDashboard extends BorderPane {
         item.setMaxWidth(Double.MAX_VALUE);
         item.setPrefHeight(70);
 
-        item.setStyle(
-                "-fx-background-color: " + background + ";" +
-                        "-fx-background-radius: 9px;"
-        );
+        item.getStyleClass().addAll("insight-item", colorClass);
 
         return item;
     }
@@ -592,13 +526,13 @@ public class UserDashboard extends BorderPane {
         heading.setFont(
                 Font.font("Arial", FontWeight.BOLD, 17)
         );
-        heading.setTextFill(Color.web(DARK));
+        heading.getStyleClass().add("heading");
 
         Label description = new Label(
                 "Analyze a GitHub pull request and estimate its merge probability."
         );
         description.setFont(Font.font("Arial", 13));
-        description.setTextFill(Color.web(MUTED));
+        description.getStyleClass().add("muted-text");
         description.setWrapText(true);
 
         Region spacer = new Region();
@@ -610,14 +544,7 @@ public class UserDashboard extends BorderPane {
         predictionButton.setPrefHeight(40);
         predictionButton.setMaxWidth(Double.MAX_VALUE);
         predictionButton.setCursor(Cursor.HAND);
-
-        predictionButton.setStyle(
-                "-fx-background-color: " + PRIMARY + ";" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 13px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 8px;"
-        );
+        predictionButton.getStyleClass().add("primary-button");
 
         predictionButton.setOnAction(event ->
                 openPredictionPage()
@@ -634,12 +561,7 @@ public class UserDashboard extends BorderPane {
         card.setPadding(new Insets(20));
         card.setPrefHeight(180);
 
-        card.setStyle(
-                "-fx-background-color: #EFF6FF;" +
-                        "-fx-background-radius: 12px;" +
-                        "-fx-border-color: #BFDBFE;" +
-                        "-fx-border-radius: 12px;"
-        );
+        card.getStyleClass().add("quick-action-card");
 
         return card;
     }
@@ -650,15 +572,6 @@ public class UserDashboard extends BorderPane {
     private VBox createSubscriptionCard(
             boolean subscribed
     ) {
-        String accentColor =
-                subscribed ? "#16A34A" : "#9333EA";
-
-        String cardBackground =
-                subscribed ? "#F0FDF4" : "#FAF5FF";
-
-        String borderColor =
-                subscribed ? "#BBF7D0" : "#E9D5FF";
-
         Label statusLabel = new Label(
                 subscribed
                         ? "PREMIUM ACCOUNT"
@@ -668,7 +581,7 @@ public class UserDashboard extends BorderPane {
         statusLabel.setFont(
                 Font.font("Arial", FontWeight.BOLD, 11)
         );
-        statusLabel.setTextFill(Color.web(accentColor));
+        statusLabel.getStyleClass().add("subscription-status");
 
         Label heading = new Label(
                 subscribed
@@ -679,7 +592,7 @@ public class UserDashboard extends BorderPane {
         heading.setFont(
                 Font.font("Arial", FontWeight.BOLD, 17)
         );
-        heading.setTextFill(Color.web(DARK));
+        heading.getStyleClass().add("heading");
 
         Label description = new Label(
                 subscribed
@@ -688,7 +601,7 @@ public class UserDashboard extends BorderPane {
         );
 
         description.setFont(Font.font("Arial", 13));
-        description.setTextFill(Color.web(MUTED));
+        description.getStyleClass().add("muted-text");
         description.setWrapText(true);
 
         VBox card = new VBox(
@@ -702,13 +615,13 @@ public class UserDashboard extends BorderPane {
             ProgressBar usageBar = new ProgressBar(0.48);
             usageBar.setMaxWidth(Double.MAX_VALUE);
             usageBar.setPrefHeight(9);
-            usageBar.setStyle("-fx-accent: #9333EA;");
+            usageBar.getStyleClass().add("usage-progress");
 
             Label usageLabel =
                     new Label("48 of 100 predictions used");
 
             usageLabel.setFont(Font.font("Arial", 11));
-            usageLabel.setTextFill(Color.web(MUTED));
+            usageLabel.getStyleClass().add("muted-text");
 
             card.getChildren().addAll(
                     usageBar,
@@ -721,7 +634,7 @@ public class UserDashboard extends BorderPane {
             premiumFeature.setFont(
                     Font.font("Arial", FontWeight.BOLD, 12)
             );
-            premiumFeature.setTextFill(Color.web(GREEN));
+            premiumFeature.getStyleClass().add("premium-feature");
 
             card.getChildren().add(premiumFeature);
         }
@@ -738,14 +651,7 @@ public class UserDashboard extends BorderPane {
         planButton.setPrefHeight(40);
         planButton.setMaxWidth(Double.MAX_VALUE);
         planButton.setCursor(Cursor.HAND);
-
-        planButton.setStyle(
-                "-fx-background-color: " + accentColor + ";" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 13px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 8px;"
-        );
+        planButton.getStyleClass().add("subscription-plan-button");
 
         planButton.setOnAction(event -> {
             if (subscribed) {
@@ -769,11 +675,9 @@ public class UserDashboard extends BorderPane {
         card.setPadding(new Insets(20));
         card.setPrefHeight(180);
 
-        card.setStyle(
-                "-fx-background-color: " + cardBackground + ";" +
-                        "-fx-background-radius: 12px;" +
-                        "-fx-border-color: " + borderColor + ";" +
-                        "-fx-border-radius: 12px;"
+        card.getStyleClass().addAll(
+                "subscription-card",
+                subscribed ? "premium-plan" : "free-plan"
         );
 
         return card;
@@ -788,7 +692,7 @@ public class UserDashboard extends BorderPane {
         heading.setFont(
                 Font.font("Arial", FontWeight.BOLD, 18)
         );
-        heading.setTextFill(Color.web(DARK));
+        heading.getStyleClass().add("heading");
 
         VBox predictionList = new VBox(10);
 
@@ -836,13 +740,7 @@ public class UserDashboard extends BorderPane {
         viewAllButton.setMaxWidth(Double.MAX_VALUE);
         viewAllButton.setPrefHeight(40);
         viewAllButton.setCursor(Cursor.HAND);
-
-        viewAllButton.setStyle(
-                "-fx-background-color: #EFF6FF;" +
-                        "-fx-text-fill: " + PRIMARY + ";" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 8px;"
-        );
+        viewAllButton.getStyleClass().add("secondary-button");
 
         viewAllButton.setOnAction(event -> {
             System.out.println("Open complete history");
@@ -861,11 +759,9 @@ public class UserDashboard extends BorderPane {
         recentCard.setMinWidth(285);
         recentCard.setPadding(new Insets(20));
 
-        recentCard.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-background-radius: 14px;" +
-                        "-fx-border-color: #E2E8F0;" +
-                        "-fx-border-radius: 14px;"
+        recentCard.getStyleClass().addAll(
+                "surface-card",
+                "recent-card"
         );
 
         return recentCard;
@@ -880,13 +776,13 @@ public class UserDashboard extends BorderPane {
         repositoryLabel.setFont(
                 Font.font("Arial", FontWeight.BOLD, 12)
         );
-        repositoryLabel.setTextFill(Color.web(DARK));
+        repositoryLabel.getStyleClass().add("heading");
         repositoryLabel.setMaxWidth(170);
         repositoryLabel.setWrapText(true);
 
         Label pullRequestLabel = new Label(pullRequest);
         pullRequestLabel.setFont(Font.font("Arial", 11));
-        pullRequestLabel.setTextFill(Color.web(MUTED));
+        pullRequestLabel.getStyleClass().add("muted-text");
 
         VBox details = new VBox(
                 3,
@@ -907,11 +803,11 @@ public class UserDashboard extends BorderPane {
         );
 
         if (numericProbability >= 70) {
-            percentage.setTextFill(Color.web("#16A34A"));
+            percentage.getStyleClass().add("probability-high");
         } else if (numericProbability >= 50) {
-            percentage.setTextFill(Color.web("#EA580C"));
+            percentage.getStyleClass().add("probability-medium");
         } else {
-            percentage.setTextFill(Color.web("#DC2626"));
+            percentage.getStyleClass().add("probability-low");
         }
 
         HBox item = new HBox(
@@ -924,12 +820,7 @@ public class UserDashboard extends BorderPane {
         item.setAlignment(Pos.CENTER_LEFT);
         item.setPadding(new Insets(12));
 
-        item.setStyle(
-                "-fx-background-color: #F8FAFC;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-border-color: #E2E8F0;" +
-                        "-fx-border-radius: 8px;"
-        );
+        item.getStyleClass().add("prediction-item");
 
         return item;
     }

@@ -1,0 +1,36 @@
+.root {
+    -app-background: #0B1120;
+    -surface: #172033;
+    -surface-subtle: #202B3D;
+    -input-background: #111827;
+    -border: #334155;
+    -text-primary: #F8FAFC;
+    -text-muted: #94A3B8;
+    -text-on-primary: #FFFFFF;
+
+    -primary: #60A5FA;
+    -primary-hover: #3B82F6;
+    -primary-soft: #1E3A5F;
+
+    -success: #4ADE80;
+    -danger: #F87171;
+    -danger-soft: #451A24;
+    -danger-soft-hover: #5F202C;
+    -scroll-thumb: #475569;
+
+    -blue-soft: #172E4D;
+    -blue-border: #285283;
+    -blue-accent: #60A5FA;
+
+    -green-soft: #153528;
+    -green-border: #256044;
+    -green-accent: #4ADE80;
+
+    -orange-soft: #422719;
+    -orange-border: #7C4521;
+    -orange-accent: #FB923C;
+
+    -purple-soft: #342044;
+    -purple-border: #623B7D;
+    -purple-accent: #C084FC;
+}

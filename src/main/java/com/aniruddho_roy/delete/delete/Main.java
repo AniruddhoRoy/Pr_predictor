@@ -1,8 +1,8 @@
 package com.aniruddho_roy.delete.delete;
 
-import com.aniruddho_roy.delete.delete.Screen.Dashboard;
 import com.aniruddho_roy.delete.delete.additional.CONSTANTS;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
+import com.aniruddho_roy.delete.delete.additional.THEAME;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -16,6 +16,7 @@ public class Main extends Application {
         NAVIGATOR navigator = new NAVIGATOR(root);
         navigator.loadDashboardScreen();
         Scene scene = new Scene(root, CONSTANTS.APPLICATION_WIDTH,CONSTANTS.APPLICATION_HEIGHT );
+        THEAME.apply(scene);
 
         stage.setTitle("Home");
         stage.setScene(scene);

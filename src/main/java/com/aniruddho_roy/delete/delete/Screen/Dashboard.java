@@ -3,13 +3,14 @@ package com.aniruddho_roy.delete.delete.Screen;
 import com.aniruddho_roy.delete.delete.additional.CONSTANTS;
 import com.aniruddho_roy.delete.delete.additional.LIB;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
+import com.aniruddho_roy.delete.delete.additional.THEAME;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -19,7 +20,7 @@ public class Dashboard extends VBox {
         this.navigator = navigator;
         Label title = new Label(CONSTANTS.APPLICATION_NAME);
         title.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        title.setTextFill(Color.DARKBLUE);
+        title.getStyleClass().add("app-title");
 
         // Load an image from:
         // src/main/resources/images/home.png
@@ -33,21 +34,18 @@ public class Dashboard extends VBox {
                         "view information, and access available services."
         );
         information.setFont(Font.font("Arial", 16));
-        information.setTextFill(Color.DIMGRAY);
+        information.getStyleClass().add("muted-text");
         information.setWrapText(true);
         information.setMaxWidth(450);
         information.setAlignment(Pos.CENTER);
 
         Button loginButton = new Button("Login");
         loginButton.setPrefSize(140, 42);
-        loginButton.setStyle(
-                "-fx-background-color: #1565C0;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-cursor: hand;"
-        );
+        loginButton.getStyleClass().add("primary-button");
+
+        HBox themeBar = new HBox(THEAME.createToggleButton());
+        themeBar.setAlignment(Pos.CENTER_RIGHT);
+        themeBar.setMaxWidth(450);
 
         loginButton.setOnAction(event -> {
             System.out.println("Login button clicked");
@@ -55,13 +53,15 @@ public class Dashboard extends VBox {
             navigator.loadLoginScreen();
         });
         this.getChildren().addAll(
+                themeBar,
                 title,
                 imageView,
                 information,
                 loginButton);
         this.setAlignment(Pos.CENTER);
         this.setPadding(new Insets(30));
-        this.setStyle("-fx-background-color: #F4F7FB;");
+        this.setSpacing(18);
+        this.getStyleClass().addAll("app-screen", "simple-screen");
     }
 
 }

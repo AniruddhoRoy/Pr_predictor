@@ -1,0 +1,284 @@
+.root {
+    -fx-font-family: "Arial";
+}
+
+.app-screen {
+    -fx-background-color: -app-background;
+}
+
+.label {
+    -fx-text-fill: -text-primary;
+}
+
+.app-title {
+    -fx-text-fill: -primary;
+}
+
+.heading {
+    -fx-text-fill: -text-primary;
+}
+
+.muted-text {
+    -fx-text-fill: -text-muted;
+}
+
+.surface-card {
+    -fx-background-color: -surface;
+    -fx-background-radius: 14px;
+    -fx-border-color: -border;
+    -fx-border-radius: 14px;
+}
+
+.button.primary-button {
+    -fx-background-color: -primary;
+    -fx-text-fill: -text-on-primary;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.button.primary-button:hover {
+    -fx-background-color: -primary-hover;
+}
+
+.simple-screen .button.primary-button {
+    -fx-font-size: 16px;
+}
+
+.button.outline-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -primary;
+    -fx-font-size: 14px;
+    -fx-border-color: -primary;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.button.outline-button:hover,
+.button.theme-toggle:hover,
+.button.secondary-button:hover {
+    -fx-background-color: -primary-soft;
+}
+
+.button.theme-toggle {
+    -fx-background-color: transparent;
+    -fx-text-fill: -primary;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-border-color: -primary;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-padding: 7px 13px;
+    -fx-cursor: hand;
+}
+
+.login-input {
+    -fx-background-color: -input-background;
+    -fx-text-fill: -text-primary;
+    -fx-prompt-text-fill: -text-muted;
+    -fx-border-color: -border;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-background-insets: 0;
+    -fx-padding: 0 12px;
+}
+
+.login-input:focused {
+    -fx-border-color: -primary;
+    -fx-border-width: 1.5px;
+}
+
+.message-error {
+    -fx-text-fill: -danger;
+}
+
+.message-success,
+.premium-feature,
+.probability-high {
+    -fx-text-fill: -success;
+}
+
+.profile-circle {
+    -fx-fill: -primary-soft;
+    -fx-stroke: -primary;
+}
+
+.profile-initials {
+    -fx-text-fill: -primary;
+}
+
+.button.menu-button,
+.button.menu-button-selected,
+.button.logout-button {
+    -fx-font-size: 14px;
+    -fx-background-radius: 8px;
+    -fx-padding: 0 15px;
+    -fx-cursor: hand;
+}
+
+.button.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -text-primary;
+}
+
+.button.menu-button:hover {
+    -fx-background-color: -surface-subtle;
+}
+
+.button.menu-button-selected {
+    -fx-background-color: -primary;
+    -fx-text-fill: -text-on-primary;
+    -fx-font-weight: bold;
+}
+
+.button.logout-button {
+    -fx-background-color: -danger-soft;
+    -fx-text-fill: -danger;
+}
+
+.button.logout-button:hover {
+    -fx-background-color: -danger-soft-hover;
+}
+
+.transparent-scroll-pane,
+.transparent-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -scroll-thumb;
+    -fx-background-radius: 8px;
+}
+
+.stat-card {
+    -fx-background-radius: 11px;
+    -fx-border-radius: 11px;
+}
+
+.stat-blue,
+.insight-blue,
+.quick-action-card {
+    -fx-background-color: -blue-soft;
+    -fx-border-color: -blue-border;
+}
+
+.stat-green,
+.insight-green {
+    -fx-background-color: -green-soft;
+    -fx-border-color: -green-border;
+}
+
+.stat-orange,
+.insight-orange {
+    -fx-background-color: -orange-soft;
+    -fx-border-color: -orange-border;
+}
+
+.stat-purple,
+.insight-purple {
+    -fx-background-color: -purple-soft;
+    -fx-border-color: -purple-border;
+}
+
+.stat-blue .stat-value,
+.insight-blue .insight-value {
+    -fx-text-fill: -blue-accent;
+}
+
+.stat-green .stat-value,
+.insight-green .insight-value {
+    -fx-text-fill: -green-accent;
+}
+
+.stat-orange .stat-value,
+.insight-orange .insight-value,
+.probability-medium {
+    -fx-text-fill: -orange-accent;
+}
+
+.stat-purple .stat-value,
+.insight-purple .insight-value {
+    -fx-text-fill: -purple-accent;
+}
+
+.insights-card {
+    -fx-background-color: -surface-subtle;
+    -fx-background-radius: 12px;
+    -fx-border-color: -border;
+    -fx-border-radius: 12px;
+}
+
+.insight-item {
+    -fx-background-radius: 9px;
+}
+
+.quick-action-card,
+.subscription-card {
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.subscription-card.free-plan {
+    -fx-background-color: -purple-soft;
+    -fx-border-color: -purple-border;
+}
+
+.subscription-card.premium-plan {
+    -fx-background-color: -green-soft;
+    -fx-border-color: -green-border;
+}
+
+.free-plan .subscription-status {
+    -fx-text-fill: -purple-accent;
+}
+
+.premium-plan .subscription-status {
+    -fx-text-fill: -green-accent;
+}
+
+.usage-progress {
+    -fx-accent: -purple-accent;
+}
+
+.button.subscription-plan-button {
+    -fx-text-fill: -text-on-primary;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.free-plan .button.subscription-plan-button {
+    -fx-background-color: -purple-accent;
+}
+
+.premium-plan .button.subscription-plan-button {
+    -fx-background-color: -green-accent;
+}
+
+.button.secondary-button {
+    -fx-background-color: -primary-soft;
+    -fx-text-fill: -primary;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.prediction-item {
+    -fx-background-color: -surface-subtle;
+    -fx-background-radius: 8px;
+    -fx-border-color: -border;
+    -fx-border-radius: 8px;
+}
+
+.probability-low {
+    -fx-text-fill: -danger;
+}

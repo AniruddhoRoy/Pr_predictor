@@ -3,12 +3,13 @@ package com.aniruddho_roy.delete.delete.Screen;
 import com.aniruddho_roy.delete.delete.additional.CONSTANTS;
 import com.aniruddho_roy.delete.delete.additional.LIB;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
+import com.aniruddho_roy.delete.delete.additional.THEAME;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -23,7 +24,7 @@ public class LoginScreen extends VBox {
         applicationName.setFont(
                 Font.font("Arial", FontWeight.BOLD, 28)
         );
-        applicationName.setTextFill(Color.DARKBLUE);
+        applicationName.getStyleClass().add("app-title");
 
         ImageView imageView = new LIB().Loadimage(
                 "/images/login.png",
@@ -36,17 +37,19 @@ public class LoginScreen extends VBox {
         title.setFont(
                 Font.font("Arial", FontWeight.BOLD, 20)
         );
-        title.setTextFill(Color.DARKSLATEGRAY);
+        title.getStyleClass().add("heading");
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
         usernameField.setMaxWidth(320);
         usernameField.setPrefHeight(42);
+        usernameField.getStyleClass().add("login-input");
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
         passwordField.setMaxWidth(320);
         passwordField.setPrefHeight(42);
+        passwordField.getStyleClass().add("login-input");
 
         Label messageLabel = new Label();
         messageLabel.setFont(Font.font("Arial", 14));
@@ -54,26 +57,15 @@ public class LoginScreen extends VBox {
         Button loginButton = new Button("Login");
         loginButton.setPrefSize(320, 42);
         loginButton.setDefaultButton(true);
-        loginButton.setStyle(
-                "-fx-background-color: #1565C0;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-cursor: hand;"
-        );
+        loginButton.getStyleClass().add("primary-button");
 
         Button backButton = new Button("Back to Home");
         backButton.setPrefSize(320, 40);
-        backButton.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-text-fill: #1565C0;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-border-color: #1565C0;" +
-                        "-fx-border-radius: 8px;" +
-                        "-fx-background-radius: 8px;" +
-                        "-fx-cursor: hand;"
-        );
+        backButton.getStyleClass().add("outline-button");
+
+        HBox themeBar = new HBox(THEAME.createToggleButton());
+        themeBar.setAlignment(Pos.CENTER_RIGHT);
+        themeBar.setMaxWidth(320);
 
         loginButton.setOnAction(event -> {
             String username = usernameField.getText().trim();
@@ -81,7 +73,7 @@ public class LoginScreen extends VBox {
 
             if (username.isEmpty() || password.isEmpty()) {
                 messageLabel.setText("Please enter username and password.");
-                messageLabel.setTextFill(Color.RED);
+                setMessageStyle(messageLabel, "message-error");
                 return;
             }
 
@@ -90,7 +82,7 @@ public class LoginScreen extends VBox {
                     password.equals("1234")) {
 
                 messageLabel.setText("Login successful!");
-                messageLabel.setTextFill(Color.GREEN);
+                setMessageStyle(messageLabel, "message-success");
 
                 /*
                  * Navigate to the next screen here.
@@ -104,7 +96,7 @@ public class LoginScreen extends VBox {
                 messageLabel.setText(
                         "Incorrect username or password."
                 );
-                messageLabel.setTextFill(Color.RED);
+                setMessageStyle(messageLabel, "message-error");
             }
         });
 
@@ -120,6 +112,7 @@ public class LoginScreen extends VBox {
         });
 
         this.getChildren().addAll(
+                themeBar,
                 applicationName,
                 imageView,
                 title,
@@ -133,6 +126,14 @@ public class LoginScreen extends VBox {
         this.setSpacing(15);
         this.setAlignment(Pos.CENTER);
         this.setPadding(new Insets(35));
-        this.setStyle("-fx-background-color: #F4F7FB;");
+        this.getStyleClass().addAll("app-screen", "simple-screen");
+    }
+
+    private void setMessageStyle(Label label, String styleClass) {
+        label.getStyleClass().removeAll(
+                "message-error",
+                "message-success"
+        );
+        label.getStyleClass().add(styleClass);
     }
 }
