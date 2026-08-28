@@ -2,6 +2,7 @@ package com.aniruddho_roy.delete.delete.additional;
 
 import com.aniruddho_roy.delete.delete.Screen.Dashboard;
 import com.aniruddho_roy.delete.delete.Screen.LoginScreen;
+import com.aniruddho_roy.delete.delete.Screen.NewPredictionScreen;
 import com.aniruddho_roy.delete.delete.Screen.UserDashboard;
 import javafx.scene.layout.BorderPane;
 
@@ -18,6 +19,9 @@ public class NAVIGATOR {
     }
     public void loadUserDashboardScreen(){
         root.setCenter(new UserDashboard(this));
+    }
+    public void loadNewPredictionScreen() {
+        root.setCenter(new NewPredictionScreen(this));
     }
 
 }

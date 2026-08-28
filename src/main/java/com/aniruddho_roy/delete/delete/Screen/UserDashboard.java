@@ -88,7 +88,7 @@ public class UserDashboard extends DashboardBase {
         VBox insightsCard = new COMPONETS().createInsightsCard();
 
         VBox quickActionCard =
-                new COMPONETS().createQuickActionCard();
+                new COMPONETS().createQuickActionCard(navigator);
 
         VBox subscriptionCard =
                 new COMPONETS().createSubscriptionCard(subscribed);

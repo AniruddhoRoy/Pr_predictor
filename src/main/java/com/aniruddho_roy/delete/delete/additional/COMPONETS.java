@@ -119,11 +119,11 @@ public class COMPONETS {
                 createMenuButton("Settings", false);
 
         dashboardButton.setOnAction(event ->
-                System.out.println("Dashboard already open")
+                navigator.loadUserDashboardScreen()
         );
 
         predictionButton.setOnAction(event ->
-                System.out.println("Open prediction page")
+                navigator.loadNewPredictionScreen()
         );
 
         historyButton.setOnAction(event -> {
@@ -364,7 +364,7 @@ public class COMPONETS {
     /*
      * Quick action card
      */
-    public VBox createQuickActionCard() {
+    public VBox createQuickActionCard(NAVIGATOR navigator) {
 
         Label heading = new Label("New Prediction");
         heading.setFont(
@@ -391,7 +391,7 @@ public class COMPONETS {
         predictionButton.getStyleClass().add("primary-button");
 
         predictionButton.setOnAction(event ->
-                System.out.println("prediction button")
+                navigator.loadNewPredictionScreen()
         );
 
         VBox card = new VBox(
