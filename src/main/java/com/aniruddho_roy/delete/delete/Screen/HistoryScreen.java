@@ -9,6 +9,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -160,7 +161,7 @@ public class HistoryScreen extends DashboardBase {
                 pullRequestLabel
         );
 
-        RegionSpacer spacer = new RegionSpacer();
+        Region spacer = new Region();
 
         Label probabilityLabel = new Label(probability);
         probabilityLabel.setFont(
@@ -204,6 +205,4 @@ public class HistoryScreen extends DashboardBase {
         return row;
     }
 
-    private static class RegionSpacer extends javafx.scene.layout.Region {
-    }
 }
