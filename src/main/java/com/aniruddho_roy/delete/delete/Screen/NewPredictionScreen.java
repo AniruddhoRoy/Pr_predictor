@@ -22,6 +22,7 @@ public class NewPredictionScreen extends DashboardBase {
 
         // Only the center area changes
         setCenter(createPredictionCenter());
+
     }
 
     private ScrollPane createPredictionCenter() {

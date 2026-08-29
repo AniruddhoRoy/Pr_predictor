@@ -101,22 +101,22 @@ public class COMPONETS {
         logoArea.setPadding(new Insets(0, 0, 20, 5));
 
         Button dashboardButton =
-                createMenuButton("Dashboard", true);
+                createMenuButton("Dashboard", NAVIGATOR.activePage==NAVIGATOR.Page.DASHBOARD);
 
         Button predictionButton =
-                createMenuButton("New Prediction", false);
+                createMenuButton("New Prediction", NAVIGATOR.activePage==NAVIGATOR.Page.NEW_PREDICTION);
 
         Button historyButton =
-                createMenuButton("History", false);
+                createMenuButton("History", NAVIGATOR.activePage==NAVIGATOR.Page.HISTORY);
 
         Button subscriptionButton =
-                createMenuButton("Subscription", false);
+                createMenuButton("Subscription", NAVIGATOR.activePage==NAVIGATOR.Page.SUBSCRIPTION);
 
         Button profileButton =
-                createMenuButton("Profile", false);
+                createMenuButton("Profile", NAVIGATOR.activePage==NAVIGATOR.Page.PROFILE);
 
         Button settingsButton =
-                createMenuButton("Settings", false);
+                createMenuButton("Settings", NAVIGATOR.activePage==NAVIGATOR.Page.SETTINGS);
 
         dashboardButton.setOnAction(event ->
                 navigator.loadUserDashboardScreen()
@@ -126,29 +126,21 @@ public class COMPONETS {
                 navigator.loadNewPredictionScreen()
         );
 
-        historyButton.setOnAction(event -> {
-            System.out.println("Open history page");
+        historyButton.setOnAction(event ->
+                navigator.loadHistoryScreen()
+        );
 
-            // navigator.loadHistoryScreen();
-        });
+        subscriptionButton.setOnAction(event ->
+                navigator.loadSubscriptionScreen()
+        );
 
-        subscriptionButton.setOnAction(event -> {
-            System.out.println("Open subscription page");
+        profileButton.setOnAction(event ->
+                navigator.loadProfileScreen()
+        );
 
-            // navigator.loadSubscriptionScreen();
-        });
-
-        profileButton.setOnAction(event -> {
-            System.out.println("Open profile page");
-
-            // navigator.loadProfileScreen();
-        });
-
-        settingsButton.setOnAction(event -> {
-            System.out.println("Open settings page");
-
-            // navigator.loadSettingsScreen();
-        });
+        settingsButton.setOnAction(event ->
+                navigator.loadSettingsScreen()
+        );
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -668,4 +660,5 @@ public class COMPONETS {
 
         return item;
     }
+
 }

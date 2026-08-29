@@ -30,6 +30,7 @@ public class UserDashboard extends DashboardBase {
         super(navigator,subscribed);
 //        this.centerContent = createDashboardContent();
         this.setCenter(createDashboardContent());
+
     }
 
 
