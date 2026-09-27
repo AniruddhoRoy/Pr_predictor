@@ -1,5 +1,6 @@
 package com.aniruddho_roy.delete.delete.Screen;
 
+import com.aniruddho_roy.delete.delete.Backend.Predictions;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -7,6 +8,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+
 
 public class NewPredictionScreen extends DashboardBase {
 
@@ -140,11 +143,14 @@ public class NewPredictionScreen extends DashboardBase {
 
         analyzeButton.setOnAction(event -> {
 
+
+            String url = githubUrlField
+                    .getText()
+                    .trim();
+
             if (githubUrlOption.isSelected()) {
 
-                String url = githubUrlField
-                        .getText()
-                        .trim();
+
 
                 boolean validUrl = url.matches(
                         "https?://github\\.com/[^/]+/[^/]+/pull/\\d+/?"
@@ -180,19 +186,9 @@ public class NewPredictionScreen extends DashboardBase {
                         "Features are valid. Ready for backend analysis."
                 );
             }
+            String probability = new Predictions().Predict(url);
 
-            /*
-             * Backend call goes here.
-             *
-             * Send:
-             * - predictionType.getValue()
-             * - GitHub URL OR manual features
-             *
-             * The backend should return:
-             * - merge probability
-             * - PR quality result
-             * - explanation/factors
-             */
+            navigator.loadPredictionResultScreen("test","test",0.5,probability);
         });
 
         VBox centerContent = new VBox(

@@ -1,13 +1,7 @@
 package com.aniruddho_roy.delete.delete.additional;
 
-import com.aniruddho_roy.delete.delete.Screen.Dashboard;
-import com.aniruddho_roy.delete.delete.Screen.HistoryScreen;
-import com.aniruddho_roy.delete.delete.Screen.LoginScreen;
-import com.aniruddho_roy.delete.delete.Screen.NewPredictionScreen;
-import com.aniruddho_roy.delete.delete.Screen.ProfileScreen;
-import com.aniruddho_roy.delete.delete.Screen.SettingsScreen;
-import com.aniruddho_roy.delete.delete.Screen.SubscriptionScreen;
-import com.aniruddho_roy.delete.delete.Screen.UserDashboard;
+import com.aniruddho_roy.delete.delete.Screen.*;
+import com.aniruddho_roy.delete.delete.Storage.APPLICATION_STORE;
 import javafx.scene.layout.BorderPane;
 
 public class NAVIGATOR {
@@ -66,5 +60,14 @@ public class NAVIGATOR {
     public void loadSettingsScreen() {
         activePage = Page.SETTINGS;
         root.setCenter(new SettingsScreen(this));
+    }
+    public void loadPredictionResultScreen(
+            String repository,
+            String pullRequest,
+            double mergeProbability,
+            String quality
+    ){
+//        activePage = Page.NEW_PREDICTION
+        root.setCenter((new PredictionResultScreen(this, APPLICATION_STORE.isUserSubscribed,repository,pullRequest,mergeProbability,quality)));
     }
 }
