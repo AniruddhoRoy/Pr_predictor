@@ -13,6 +13,38 @@ The model covers the data required by the existing screens:
 - Prediction lifecycle, results, quality, recommendations, and explanatory factors.
 - History and recent predictions, which are read from prediction records.
 
+## Basic
+
+An ER diagram describes how records in two entities are related. The symbols beside each entity show its cardinality, or how many records can participate in the relationship.
+
+### Common relationship types
+
+| Relationship | Meaning | Example |
+|---|---|---|
+| One-to-one (1:1) | One record in entity A is related to exactly one record in entity B, and vice versa. | One user has one settings row. |
+| One-to-many (1:N) | One record in entity A can be related to many records in entity B. Each B record belongs to one A record. | One repository contains many pull requests. |
+| Many-to-one (N:1) | Many records in entity A relate to one record in entity B. This is the same relationship as one-to-many viewed from the opposite side. | Many predictions belong to one user. |
+| Many-to-many (M:N) | Many records in entity A can relate to many records in entity B. A junction table is required to store the links. | Many users can belong to many teams through a user_team table. |
+
+~~~mermaid
+erDiagram
+    USER ||--|| USER_SETTINGS : "one-to-one"
+    REPOSITORY ||--o{ PULL_REQUEST : "one-to-many"
+    PREDICTION }o--|| USER_ACCOUNT : "many-to-one"
+    USER_MEMBER }o--o{ TEAM : "many-to-many"
+~~~
+
+### Crow's-foot notation used here
+
+| Symbol | Meaning |
+|---|---|
+| `||` | Exactly one |
+| `o|` | Zero or one |
+| `|{` | One or many |
+| `o{` | Zero or many |
+
+For example, `REPOSITORIES ||--o{ PULL_REQUESTS` means one repository can contain zero or many pull requests, while each pull request belongs to one repository. A many-to-many relationship is normally implemented with a separate junction table containing foreign keys to both entities.
+
 ## Conceptual ER diagram
 
 ~~~mermaid
