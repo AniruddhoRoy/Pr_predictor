@@ -94,6 +94,7 @@ The client is a lightweight view-switching application rather than a full MVC/MV
 │       │   ├── NewPredictionScreen.java
 │       │   ├── PredictionResultScreen.java
 │       │   ├── ProfileScreen.java
+│       │   ├── RegisterScreen.java
 │       │   ├── SettingsScreen.java
 │       │   ├── SubscriptionScreen.java
 │       │   └── UserDashboard.java
@@ -152,6 +153,7 @@ target/ is generated build output and is not an authoritative source directory.
 |---|---|
 | Screen/Dashboard.java | Public landing page. Displays the placeholder application name, home artwork, explanatory copy, theme toggle, and Login button. |
 | Screen/LoginScreen.java | Username/password form. Empty fields fail validation. The current local-only credentials are admin / 1234; success opens UserDashboard, failure shows an error, and Back to Home returns to Dashboard. |
+| Screen/RegisterScreen.java | Registration form for full name, username, email, password, and password confirmation. Performs UI validation and displays a backend-pending success message; it does not create an account yet. It also links back to Login and Home. |
 | Screen/DashboardBase.java | Shared authenticated BorderPane. Installs header at top, sidebar at left, an initial center placeholder, and recent predictions at right. Stores the navigator and subscription flag for child screens. |
 | Screen/UserDashboard.java | Dashboard overview. Builds summary cards, useful insights, a new-prediction quick action, and a plan card. Displayed values such as 48 total predictions and 72% average probability are hard-coded. |
 | Screen/NewPredictionScreen.java | Prediction input form. Provides prediction-type selection, GitHub URL/manual feature mode selection, URL regex validation, non-empty manual input validation, the Analyze button, and the call to Predictions. The current handler sends the url variable even in manual mode, then opens a result with placeholder repository/PR values and a 0.5 probability. |
@@ -199,7 +201,14 @@ LoginScreen
   ├─ empty username/password ──> validation error
   ├─ admin / 1234 ──> NAVIGATOR.loadUserDashboardScreen()
   ├─ any other values ──> incorrect-credentials message
+  ├─ Create an account ──> NAVIGATOR.loadRegisterScreen()
   └─ Back to Home ──> NAVIGATOR.loadDashboardScreen()
+
+RegisterScreen
+  ├─ missing/invalid fields ──> validation error
+  ├─ valid fields ──> backend-pending status message
+  ├─ Sign in ──> LoginScreen
+  └─ Back to Home ──> Dashboard
 ~~~
 
 The credential check is only a temporary UI demonstration. There is no user record, password hashing, session, token, or logout invalidation in the JavaFX code.
@@ -320,7 +329,8 @@ Important rules:
 10. Search, export, profile save, settings save, plan actions, and several dashboard actions are placeholders.
 11. URLS.AUTH and URLS.SESSION are constants only; login/history API calls are not implemented.
 12. Subscription state is a static boolean and is not loaded from a backend session.
-13. No automated tests are present under src/test.
+13. Registration is currently UI-only; the form does not call URLS.AUTH.REGISTER_URL or create a user session.
+14. No automated tests are present under src/test.
 
 ## 11. Recommended backend implementation order
 

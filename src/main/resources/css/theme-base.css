@@ -46,6 +46,79 @@
     -fx-font-size: 16px;
 }
 
+.auth-page {
+    -fx-background-color: -app-background;
+}
+
+.auth-shell {
+    -fx-background-color: -surface;
+    -fx-background-radius: 20px;
+    -fx-border-color: -border;
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 22, 0.18, 0, 8);
+    -fx-padding: 0;
+}
+
+.auth-hero {
+    -fx-background-color: -primary-soft;
+    -fx-background-radius: 20px 0 0 20px;
+    -fx-border-color: transparent;
+}
+
+.auth-hero-title {
+    -fx-text-fill: -text-primary;
+}
+
+.auth-hero-text,
+.auth-hero-point {
+    -fx-text-fill: -text-muted;
+}
+
+.auth-hero-point {
+    -fx-font-size: 14px;
+}
+
+.auth-form {
+    -fx-background-color: -surface;
+    -fx-background-radius: 0 20px 20px 0;
+}
+
+.auth-form-title {
+    -fx-text-fill: -text-primary;
+}
+
+.auth-form-subtitle,
+.auth-demo {
+    -fx-text-fill: -text-muted;
+}
+
+.auth-field-label {
+    -fx-text-fill: -text-primary;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.auth-status {
+    -fx-font-size: 12px;
+}
+
+.auth-demo {
+    -fx-font-size: 11px;
+}
+
+.hyperlink.auth-link {
+    -fx-text-fill: -primary;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+    -fx-font-weight: bold;
+    -fx-underline: false;
+    -fx-cursor: hand;
+}
+
+.hyperlink.auth-link:hover {
+    -fx-underline: true;
+}
+
 .button.outline-button {
     -fx-background-color: transparent;
     -fx-text-fill: -primary;

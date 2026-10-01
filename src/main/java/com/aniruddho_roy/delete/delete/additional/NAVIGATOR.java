@@ -8,6 +8,7 @@ public class NAVIGATOR {
 
     public enum Page {
         DASHBOARD,
+        REGISTER,
         NEW_PREDICTION,
         HISTORY,
         SUBSCRIPTION,
@@ -30,6 +31,11 @@ public class NAVIGATOR {
 
     public void loadLoginScreen() {
         root.setCenter(new LoginScreen(this));
+    }
+
+    public void loadRegisterScreen() {
+        activePage = Page.REGISTER;
+        root.setCenter(new RegisterScreen(this));
     }
 
     public void loadUserDashboardScreen() {
