@@ -11,6 +11,7 @@ The model covers the data required by the existing screens:
 - GitHub repositories and pull requests submitted to NewPredictionScreen.
 - Manual feature input and backend-extracted features.
 - Prediction lifecycle, results, quality, recommendations, and explanatory factors.
+- Available prediction models and the model version used for each prediction.
 - History and recent predictions, which are read from prediction records.
 
 ## Basic
@@ -53,6 +54,7 @@ erDiagram
     USERS ||--o{ SUBSCRIPTIONS : "owns"
     PLANS ||--o{ SUBSCRIPTIONS : "defines"
     USERS ||--o{ USAGE_PERIODS : "has monthly usage"
+    MODELS ||--o{ PREDICTIONS : "runs"
     USAGE_PERIODS ||--o{ PREDICTIONS : "counts"
     USERS ||--o{ PREDICTIONS : "submits"
     REPOSITORIES ||--o{ PULL_REQUESTS : "contains"
@@ -90,6 +92,19 @@ erDiagram
         integer monthly_prediction_limit
         string description
         boolean active
+    }
+
+    MODELS {
+        uuid model_id PK
+        string code UK
+        string name
+        string task_type
+        string version
+        string provider
+        string description
+        boolean active
+        datetime created_at
+        datetime retired_at
     }
 
     SUBSCRIPTIONS {
@@ -137,6 +152,7 @@ erDiagram
         uuid prediction_id PK
         uuid user_id FK
         uuid usage_period_id FK
+        uuid model_id FK
         uuid pull_request_id FK
         string prediction_type
         string status
@@ -193,6 +209,7 @@ erDiagram
 | USERS → USER_SETTINGS | Each user has one settings row. Settings are separated from identity data so theme and prediction preferences can change independently. |
 | USERS → SUBSCRIPTIONS → PLANS | A user can have subscription history; each subscription points to a plan. Only one subscription should be active for a user at a time. |
 | USERS → USAGE_PERIODS | One row represents one user's quota window, normally one calendar month. limit_snapshot preserves the limit that applied during that month. |
+| MODELS → PREDICTIONS | A model catalog entry can be used by many predictions. A prediction records model_id and a version snapshot so results remain reproducible after a model is retired. |
 | USERS → PREDICTIONS | Every prediction belongs to the authenticated user who submitted it. |
 | REPOSITORIES → PULL_REQUESTS | A repository contains many pull requests. The unique (repository_id, number) pair prevents the same pull request from being stored twice. |
 | PULL_REQUESTS → PREDICTIONS | A GitHub-backed prediction can point to a stored pull request. pull_request_id is nullable for manual-feature predictions. |
@@ -206,6 +223,7 @@ erDiagram
 - HistoryScreen does not need a separate history table. It can query PREDICTIONS joined to PULL_REQUESTS and PREDICTION_RESULTS, ordered by created_at.
 - Passwords are stored only as password_hash; plaintext passwords must never be persisted.
 - PREDICTION_FEATURES uses typed value columns so numeric and boolean model inputs remain queryable. Exactly one value column should be populated according to value_type.
+- MODELS is the source of truth for available models. Only active models should be returned by the model-list API; old model rows remain available for prediction history and reproducibility.
 - A manual input may not have a PULL_REQUESTS row. A URL input may initially have no pull request row while GitHub data is being fetched, then be linked after retrieval.
 - An active plan's unlimited quota is represented by a NULL monthly_prediction_limit; the backend still records usage for reporting.
 - Authentication sessions or JWT refresh tokens are intentionally not part of this relational model. They may be managed by a token store, identity provider, or a separate session table when the backend contract is finalized.

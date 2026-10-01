@@ -11,11 +11,14 @@ The application is a pull-request intelligence client. A user should be able to:
 1. Sign in and manage profile/settings.
 2. Submit a GitHub pull-request URL or manual pull-request features.
 3. Ask for merge probability, PR quality, or both.
-4. See a prediction result with scores, factors, and a recommendation.
-5. Review prediction history and usage.
-6. View and manage Free/Premium subscription information.
+4. Use an available prediction model selected by the backend or, after the model selector is added, selected by the user.
+5. See a prediction result with scores, factors, and a recommendation.
+6. Review prediction history and usage.
+7. View and manage Free/Premium subscription information.
 
 The JavaFX client owns presentation, local input checks, navigation, and rendering. The future backend must own authentication, authorization, GitHub retrieval, feature extraction, model inference, quality analysis, usage enforcement, subscription state, and persistence.
+
+The model catalog is part of the backend design. The current JavaFX New Prediction screen does not yet display an available-model selector, so the backend should use a documented default model until that control is added.
 
 ## 2. Technology and runtime
 
@@ -254,6 +257,7 @@ The current UI implies two input modes and three output modes.
 {
   "inputType": "GITHUB_URL",
   "predictionType": "BOTH",
+  "modelId": "merge-probability-v1",
   "pullRequestUrl": "https://github.com/owner/repository/pull/123"
 }
 ~~~
@@ -264,6 +268,7 @@ The current UI implies two input modes and three output modes.
 {
   "inputType": "MANUAL_FEATURES",
   "predictionType": "MERGE_PROBABILITY",
+  "modelId": "merge-probability-v1",
   "features": {
     "changedFiles": 12,
     "additions": 150,
@@ -273,7 +278,7 @@ The current UI implies two input modes and three output modes.
 }
 ~~~
 
-The exact endpoint and response shape should be agreed with the backend before changing Predictions. A successful response should contain a prediction identifier, repository/PR information when available, merge probability on a consistent 0..100 scale, quality score/label, recommendation, ordered factors, status, and model version. Errors should have a status code and safe user-facing message.
+The exact endpoint and response shape should be agreed with the backend before changing Predictions. A modelId may be omitted when the backend chooses the default active model. A successful response should contain a prediction identifier, repository/PR information when available, the model id/name/version used, merge probability on a consistent 0..100 scale, quality score/label, recommendation, ordered factors, status, and model version. Errors should have a status code and safe user-facing message. A separate model-list endpoint should return active models and their supported task types.
 
 ## 9. Database design handoff
 
@@ -283,10 +288,12 @@ The ER and relational schema diagrams define the backend persistence boundary:
 users ── user_settings
   ├── subscriptions ── plans
   ├── usage_periods
-  └── predictions ── prediction_inputs
-                   ├─ prediction_features
-                   ├─ pull_requests ── repositories
-                   └─ prediction_results ── prediction_factors
+  └── predictions
+       ├── prediction_inputs
+       ├── prediction_features
+       ├── models
+       ├── pull_requests ── repositories
+       └── prediction_results ── prediction_factors
 ~~~
 
 Important rules:
@@ -295,6 +302,7 @@ Important rules:
 - A manual prediction may have no pull-request row.
 - A URL prediction can be linked to a repository/pull request after GitHub retrieval.
 - One completed prediction has one result; a pending/failed prediction may have none.
+- Every completed prediction records the model catalog row and version used, even if that model is later retired.
 - A user can have subscription history but only one active plan at a time.
 - Monthly usage is recorded per user and period, including unlimited plans for reporting.
 

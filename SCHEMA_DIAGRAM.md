@@ -9,11 +9,12 @@ flowchart LR
     users["users<br/>PK user_id<br/>UQ username<br/>UQ email<br/>password_hash<br/>full_name<br/>role<br/>github_profile_url<br/>created_at<br/>updated_at"]
     settings["user_settings<br/>PK/FK user_id<br/>theme_mode<br/>notifications_enabled<br/>default_prediction_type<br/>default_input_mode<br/>updated_at"]
     plans["plans<br/>PK plan_id<br/>UQ code<br/>name<br/>monthly_prediction_limit<br/>description<br/>active"]
+    models["models<br/>PK model_id<br/>UQ code<br/>name<br/>task_type<br/>version<br/>provider<br/>description<br/>active<br/>created_at<br/>retired_at"]
     subscriptions["subscriptions<br/>PK subscription_id<br/>FK user_id<br/>FK plan_id<br/>status<br/>started_at<br/>ended_at<br/>provider_reference"]
     usage["usage_periods<br/>PK usage_period_id<br/>FK user_id<br/>period_start<br/>period_end<br/>predictions_used<br/>limit_snapshot"]
     repos["repositories<br/>PK repository_id<br/>provider<br/>owner<br/>name<br/>canonical_url"]
     prs["pull_requests<br/>PK pull_request_id<br/>FK repository_id<br/>number<br/>UQ url<br/>title<br/>state<br/>author_login<br/>fetched_at"]
-    predictions["predictions<br/>PK prediction_id<br/>FK user_id<br/>FK usage_period_id<br/>FK pull_request_id NULL<br/>prediction_type<br/>status<br/>model_version<br/>created_at<br/>completed_at<br/>error_message"]
+    predictions["predictions<br/>PK prediction_id<br/>FK user_id<br/>FK usage_period_id<br/>FK model_id<br/>FK pull_request_id NULL<br/>prediction_type<br/>status<br/>model_version<br/>created_at<br/>completed_at<br/>error_message"]
     inputs["prediction_inputs<br/>PK/FK prediction_id<br/>input_mode<br/>github_url NULL<br/>raw_feature_text NULL<br/>submitted_at"]
     features["prediction_features<br/>PK feature_id<br/>FK prediction_id<br/>feature_name<br/>value_type<br/>value_text NULL<br/>value_number NULL<br/>value_boolean NULL<br/>source"]
     results["prediction_results<br/>PK result_id<br/>UQ/FK prediction_id<br/>merge_probability<br/>quality_score<br/>quality_label<br/>recommendation<br/>generated_at"]
@@ -22,6 +23,7 @@ flowchart LR
     users -->|user_id| settings
     users -->|user_id| subscriptions
     plans -->|plan_id| subscriptions
+    models -->|model_id| predictions
     users -->|user_id| usage
     usage -->|usage_period_id| predictions
     users -->|user_id| predictions
@@ -72,6 +74,24 @@ subscriptions records a user's plan history. Recommended statuses are ACTIVE, CA
 | plans | plan_id PK, code UNIQUE, name, monthly_prediction_limit NULLABLE, description, active. |
 | subscriptions | subscription_id PK, user_id FK, plan_id FK, status, started_at, ended_at NULLABLE, provider_reference NULLABLE, created_at. |
 
+### models
+
+The models table is the backend catalog of available prediction models. It allows the frontend to request a model list and lets each prediction retain the exact model used, including its version.
+
+| Column | Type | Constraints | Purpose |
+|---|---|---|---|
+| model_id | UUID | PK | Stable model identifier referenced by predictions. |
+| code | VARCHAR(80) | NOT NULL, UNIQUE | Machine-readable model code, such as merge-probability-v1. |
+| name | VARCHAR(150) | NOT NULL | Display name for a future model selector. |
+| task_type | VARCHAR(30) | NOT NULL | MERGE_PROBABILITY, PR_QUALITY, or BOTH. |
+| version | VARCHAR(80) | NOT NULL | Deployed model version. Add UNIQUE(code, version). |
+| provider | VARCHAR(100) | NULLABLE | Model provider or serving system. |
+| description | TEXT | NULLABLE | Human-readable model description. |
+| active | BOOLEAN | NOT NULL, default TRUE | Whether the model is available for new predictions. |
+| created_at / retired_at | TIMESTAMPTZ | NOT NULL / NULLABLE | Model lifecycle timestamps. |
+
+Retired models must remain stored because historical predictions still reference them. The available-model endpoint should filter active = TRUE and should filter by the requested prediction type when necessary.
+
 ### usage_periods
 
 | Column | Type | Constraints | Purpose |
@@ -100,6 +120,7 @@ These rows are populated by the backend's GitHub integration. The JavaFX client 
 | prediction_id | UUID | PK | One submitted analysis request. |
 | user_id | UUID | FK → users.user_id | Authenticated owner. |
 | usage_period_id | UUID | FK → usage_periods.usage_period_id | Quota period charged by the request. |
+| model_id | UUID | FK → models.model_id | Model selected for the request. Nullable while a request is still being prepared, if the backend supports automatic model selection. |
 | pull_request_id | UUID | NULLABLE FK → pull_requests.pull_request_id | Set for a GitHub-backed request; null for manual-only input. |
 | prediction_type | VARCHAR(30) | NOT NULL | Requested output: MERGE_PROBABILITY, PR_QUALITY, or BOTH. |
 | status | VARCHAR(20) | NOT NULL | PENDING, PROCESSING, COMPLETED, or FAILED. |
@@ -140,10 +161,11 @@ The frontend's current screens map to these query patterns:
 
 | Screen | Backend query |
 |---|---|
-| Dashboard | Aggregate predictions and usage_periods for the authenticated user, plus recent prediction_results. |
-| New Prediction | Create predictions, prediction_inputs, and feature rows; then create a result asynchronously or synchronously. |
+| Dashboard | Aggregate predictions and usage_periods for the authenticated user, plus recent prediction_results and model labels. |
+| New Prediction | Fetch active models, create predictions, prediction_inputs, and feature rows; then create a result asynchronously or synchronously. |
 | Prediction Result | Fetch one predictions row with its input, result, and ordered factors. |
 | History | Search and paginate predictions joined to pull_requests and prediction_results. |
+| Available Models | List active models, optionally filtered by task_type. |
 | Profile | Read/update users. |
 | Settings | Read/update user_settings. |
 | Subscription | Read active subscriptions and its plans; start changes through a billing service. |
