@@ -65,24 +65,24 @@ public class NewPredictionScreen extends DashboardBase {
                 predictionType
         );
 
-        RadioButton githubUrlOption =
-                new RadioButton("GitHub PR URL");
+//        RadioButton githubUrlOption =
+//                new RadioButton("GitHub PR URL");
+//
+//        RadioButton manualFeatureOption =
+//                new RadioButton("Manual Features");
 
-        RadioButton manualFeatureOption =
-                new RadioButton("Manual Features");
+//        ToggleGroup inputGroup = new ToggleGroup();
+//
+//        githubUrlOption.setToggleGroup(inputGroup);
+//        manualFeatureOption.setToggleGroup(inputGroup);
+//        githubUrlOption.setSelected(true);
 
-        ToggleGroup inputGroup = new ToggleGroup();
-
-        githubUrlOption.setToggleGroup(inputGroup);
-        manualFeatureOption.setToggleGroup(inputGroup);
-        githubUrlOption.setSelected(true);
-
-        HBox inputOptions = new HBox(
-                20,
-                githubUrlOption,
-                manualFeatureOption
-        );
-        inputOptions.setAlignment(Pos.CENTER_LEFT);
+//        HBox inputOptions = new HBox(
+//                20,
+//                githubUrlOption,
+//                manualFeatureOption
+//        );
+//        inputOptions.setAlignment(Pos.CENTER_LEFT);
 
         TextField githubUrlField = new TextField();
         githubUrlField.setPromptText(
@@ -117,19 +117,19 @@ public class NewPredictionScreen extends DashboardBase {
         manualFeatureBox.setVisible(false);
         manualFeatureBox.setManaged(false);
 
-        inputGroup.selectedToggleProperty().addListener(
-                (observable, oldValue, newValue) -> {
-
-                    boolean urlSelected =
-                            newValue == githubUrlOption;
-
-                    githubUrlBox.setVisible(urlSelected);
-                    githubUrlBox.setManaged(urlSelected);
-
-                    manualFeatureBox.setVisible(!urlSelected);
-                    manualFeatureBox.setManaged(!urlSelected);
-                }
-        );
+//        inputGroup.selectedToggleProperty().addListener(
+//                (observable, oldValue, newValue) -> {
+//
+//                    boolean urlSelected =
+//                            newValue == githubUrlOption;
+//
+//                    githubUrlBox.setVisible(urlSelected);
+//                    githubUrlBox.setManaged(urlSelected);
+//
+//                    manualFeatureBox.setVisible(!urlSelected);
+//                    manualFeatureBox.setManaged(!urlSelected);
+//                }
+//        );
 
         Label statusLabel = new Label();
         statusLabel.getStyleClass().add("muted-text");
@@ -148,7 +148,7 @@ public class NewPredictionScreen extends DashboardBase {
                     .getText()
                     .trim();
 
-            if (githubUrlOption.isSelected()) {
+//            if (githubUrlOption.isSelected()) {
 
 
 
@@ -168,24 +168,24 @@ public class NewPredictionScreen extends DashboardBase {
                         "GitHub URL is valid. Ready for backend analysis."
                 );
 
-            } else {
-
-                String features = featureField
-                        .getText()
-                        .trim();
-
-                if (features.isEmpty()) {
-                    statusLabel.setText(
-                            "Please enter pull-request features."
-                    );
-                    statusLabel.getStyleClass().add("message-error");
-                    return;
-                }
-
-                statusLabel.setText(
-                        "Features are valid. Ready for backend analysis."
-                );
-            }
+//            } else {
+//
+//                String features = featureField
+//                        .getText()
+//                        .trim();
+//
+//                if (features.isEmpty()) {
+//                    statusLabel.setText(
+//                            "Please enter pull-request features."
+//                    );
+//                    statusLabel.getStyleClass().add("message-error");
+//                    return;
+//                }
+//
+//                statusLabel.setText(
+//                        "Features are valid. Ready for backend analysis."
+//                );
+//            }
 //            String probability = new Predictions().Predict(url);
                 String probability = "89.4";
             navigator.loadPredictionResultScreen("test","test",0.5,probability);
@@ -196,7 +196,7 @@ public class NewPredictionScreen extends DashboardBase {
                 heading,
                 description,
                 predictionTypeBox,
-                inputOptions,
+//                inputOptions,
                 githubUrlBox,
                 manualFeatureBox,
                 analyzeButton,
