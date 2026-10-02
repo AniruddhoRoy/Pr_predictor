@@ -6,7 +6,8 @@ module com.aniruddho_roy.delete.delete {
 
 
     requires com.fasterxml.jackson.databind;
-
+    opens com.aniruddho_roy.delete.delete.Backend
+            to com.fasterxml.jackson.databind;
     opens com.aniruddho_roy.delete.delete to javafx.fxml;
     exports com.aniruddho_roy.delete.delete;
 }

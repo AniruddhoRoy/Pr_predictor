@@ -11,7 +11,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import com.aniruddho_roy.delete.delete.Backend.Profile;
+import com.aniruddho_roy.delete.delete.Backend.User;
+
 public class ProfileScreen extends DashboardBase {
+    private final Profile profileApi =
+            new Profile();
 
     public ProfileScreen(NAVIGATOR navigator) {
         this(navigator, false);
@@ -37,17 +42,57 @@ public class ProfileScreen extends DashboardBase {
         description.setFont(Font.font("Arial", 14));
         description.getStyleClass().add("muted-text");
 
-        TextField nameField = new TextField("Aniruddho Roy");
+        TextField userNameField =
+                new TextField("Error");
+
+        TextField nameField =
+                new TextField("ERROR");
+
+        TextField emailField =
+                new TextField("ERROR");
+
+        TextField roleField =
+                new TextField("ERROR");
+
+        TextField githubField =
+                new TextField("ERROR");
+
+        userNameField.getStyleClass().add("login-input");
         nameField.getStyleClass().add("login-input");
-
-        TextField emailField = new TextField("aniruddho@example.com");
         emailField.getStyleClass().add("login-input");
-
-        TextField roleField = new TextField("Developer");
         roleField.getStyleClass().add("login-input");
-
-        TextField githubField = new TextField("github.com/aniruddhoroy");
         githubField.getStyleClass().add("login-input");
+
+        roleField.setEditable(false);
+        userNameField.setEditable(false);
+        User user =
+                profileApi.getProfile();
+
+        if (user != null) {
+            userNameField.setText(
+                    user.getUsername()
+            );
+
+            nameField.setText(
+                    user.getFullName()
+            );
+
+            emailField.setText(
+                    user.getEmail()
+            );
+
+            roleField.setText(
+                    user.getRole()
+            );
+
+            if (user.getGithubProfileUrl() != null) {
+
+                githubField.setText(
+                        user.getGithubProfileUrl()
+                );
+            }
+        }
+
 
         GridPane fields = new GridPane();
         fields.setHgap(15);
@@ -55,8 +100,9 @@ public class ProfileScreen extends DashboardBase {
 
         fields.add(createField("Full name", nameField), 0, 0);
         fields.add(createField("Email", emailField), 1, 0);
-        fields.add(createField("Role", roleField), 0, 1);
+        fields.add(createField("Role (read-only)", roleField), 0, 1);
         fields.add(createField("GitHub profile", githubField), 1, 1);
+        fields.add(createField("user Name (read-only):",userNameField),0,2);
 
         Label status = new Label();
         status.getStyleClass().add("muted-text");
@@ -65,11 +111,71 @@ public class ProfileScreen extends DashboardBase {
         saveButton.setPrefHeight(40);
         saveButton.getStyleClass().add("primary-button");
 
-        saveButton.setOnAction(event ->
+        saveButton.setOnAction(event -> {
+
+            String fullName =
+                    nameField.getText().trim();
+
+            String email =
+                    emailField.getText().trim();
+
+            String github =
+                    githubField.getText().trim();
+
+
+            if (fullName.isEmpty()) {
+
                 status.setText(
-                        "Profile changes are ready to send to the backend."
-                )
-        );
+                        "Full name cannot be empty."
+                );
+
+                return;
+            }
+
+
+            if (email.isEmpty()) {
+
+                status.setText(
+                        "Email cannot be empty."
+                );
+
+                return;
+            }
+
+
+            int result =
+                    profileApi.updateProfile(
+                            fullName,
+                            email,
+                            github
+                    );
+
+
+            if (result == 200) {
+
+                status.setText(
+                        "Profile updated successfully."
+                );
+
+            } else if (result == 409) {
+
+                status.setText(
+                        "This email is already being used."
+                );
+
+            } else if (result == 401) {
+
+                status.setText(
+                        "Your login session has expired."
+                );
+
+            } else {
+
+                status.setText(
+                        "Could not update profile."
+                );
+            }
+        });
 
         VBox content = new VBox(
                 18,

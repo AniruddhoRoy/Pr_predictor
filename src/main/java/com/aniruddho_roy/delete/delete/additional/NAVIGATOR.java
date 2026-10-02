@@ -1,5 +1,9 @@
 package com.aniruddho_roy.delete.delete.additional;
 
+import com.aniruddho_roy.delete.delete.Auth.TokenStorage;
+import com.aniruddho_roy.delete.delete.Backend.Auth;
+import com.aniruddho_roy.delete.delete.Backend.Profile;
+import com.aniruddho_roy.delete.delete.Backend.User;
 import com.aniruddho_roy.delete.delete.Screen.*;
 import com.aniruddho_roy.delete.delete.Storage.APPLICATION_STORE;
 import javafx.scene.layout.BorderPane;
@@ -30,7 +34,12 @@ public class NAVIGATOR {
     }
 
     public void loadLoginScreen() {
-        root.setCenter(new LoginScreen(this));
+        if(TokenStorage.hasToken()){
+            loadUserDashboardScreen();
+        }else{
+            root.setCenter(new LoginScreen(this));
+        }
+
     }
 
     public void loadRegisterScreen() {
@@ -40,7 +49,15 @@ public class NAVIGATOR {
 
     public void loadUserDashboardScreen() {
         activePage = Page.DASHBOARD;
-        root.setCenter(new UserDashboard(this));
+        Profile profile = new Profile();
+        if(profile.getProfile_test()){
+            root.setCenter(new UserDashboard(this));
+        }
+        else {
+            TokenStorage.removeToken();
+            loadLoginScreen();
+        }
+
     }
 
     public void loadNewPredictionScreen() {

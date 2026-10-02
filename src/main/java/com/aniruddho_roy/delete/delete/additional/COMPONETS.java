@@ -1,5 +1,6 @@
 package com.aniruddho_roy.delete.delete.additional;
 
+import com.aniruddho_roy.delete.delete.Auth.TokenStorage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -154,7 +155,7 @@ public class COMPONETS {
 
         logoutButton.setOnAction(event -> {
             System.out.println("User logged out");
-
+            TokenStorage.removeToken();
             navigator.loadLoginScreen();
         });
 
