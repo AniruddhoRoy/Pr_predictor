@@ -17,7 +17,7 @@ public final class THEAME {
     private static final String LIGHT_STYLESHEET = stylesheet("/css/light-theme.css");
     private static final String DARK_STYLESHEET = stylesheet("/css/dark-theme.css");
 
-    private static Mode currentMode = Mode.LIGHT;
+    public static Mode currentMode = Mode.LIGHT;
 
     private THEAME() {
     }

@@ -16,7 +16,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import com.aniruddho_roy.delete.delete.Backend.Settings;
+import com.aniruddho_roy.delete.delete.Backend.DTO.UserSettings;
+
 public class SettingsScreen extends DashboardBase {
+    private final Settings settingsApi =
+            new Settings();
 
     public SettingsScreen(NAVIGATOR navigator) {
         this(navigator, false);
@@ -41,9 +46,9 @@ public class SettingsScreen extends DashboardBase {
         );
         description.setFont(Font.font("Arial", 14));
         description.getStyleClass().add("muted-text");
-
+        /////////////////// Theame is not working ///////////////////////////
         Button themeButton = THEAME.createToggleButton();
-
+        /////////////////// Theame is not working ///////////////////////////
         CheckBox notificationBox = new CheckBox(
                 "Receive prediction notifications"
         );
@@ -94,16 +99,152 @@ public class SettingsScreen extends DashboardBase {
         Label status = new Label();
         status.getStyleClass().add("muted-text");
 
+
+
+        UserSettings settings =
+                settingsApi.getSettings();
+
+        if (settings != null) {
+
+            // Theme
+//            if ("DARK".equals(settings.getThemeMode())) {
+//                themeMode.getSelectionModel()
+//                        .select("Dark");
+//            } else {
+//                themeMode.getSelectionModel()
+//                        .select("Light");
+//            }
+
+
+            // Notifications
+            notificationBox.setSelected(
+                    settings.isNotificationsEnabled()
+            );
+
+
+            // Prediction type
+            switch (settings.getDefaultPredictionType()) {
+
+                case "MERGE_PROBABILITY" ->
+                        predictionType
+                                .getSelectionModel()
+                                .select("Merge Probability");
+
+                case "PR_QUALITY" ->
+                        predictionType
+                                .getSelectionModel()
+                                .select("PR Quality");
+
+                default ->
+                        predictionType
+                                .getSelectionModel()
+                                .select("Both");
+            }
+
+
+            // Input mode
+            if ("MANUAL_FEATURES".equals(
+                    settings.getDefaultInputMode()
+            )) {
+
+                defaultInput
+                        .getSelectionModel()
+                        .select("Manual Features");
+
+            } else {
+
+                defaultInput
+                        .getSelectionModel()
+                        .select("GitHub PR URL");
+            }
+        }
+
+
         Button saveButton = new Button("Save Settings");
         saveButton.setPrefHeight(40);
         saveButton.getStyleClass().add("primary-button");
 
-        saveButton.setOnAction(event ->
-                status.setText(
-                        "Settings are ready to be saved through the backend."
-                )
-        );
+        saveButton.setOnAction(event -> {
 
+            String selectedTheme = "DARK";
+
+//            if ("Dark".equals(
+//                    themeMode.getValue()
+//            )) {
+//                selectedTheme = "DARK";
+//            } else {
+//                selectedTheme = "LIGHT";
+//            }
+
+
+            String selectedPrediction;
+
+            switch (predictionType.getValue()) {
+
+                case "Merge Probability" ->
+                        selectedPrediction =
+                                "MERGE_PROBABILITY";
+
+                case "PR Quality" ->
+                        selectedPrediction =
+                                "PR_QUALITY";
+
+                default ->
+                        selectedPrediction =
+                                "BOTH";
+            }
+
+
+            String selectedInput;
+
+            if ("Manual Features".equals(
+                    defaultInput.getValue()
+            )) {
+
+                selectedInput =
+                        "MANUAL_FEATURES";
+
+            } else {
+
+                selectedInput =
+                        "GITHUB_URL";
+            }
+
+
+            int result =
+                    settingsApi.updateSettings(
+                            selectedTheme,
+                            notificationBox.isSelected(),
+                            selectedPrediction,
+                            selectedInput
+                    );
+
+
+            if (result == 200) {
+
+                status.setText(
+                        "Settings saved successfully."
+                );
+
+            } else if (result == 400) {
+
+                status.setText(
+                        "Invalid settings value."
+                );
+
+            } else if (result == 401) {
+
+                status.setText(
+                        "Your session has expired. Please login again."
+                );
+
+            } else {
+
+                status.setText(
+                        "Could not save settings."
+                );
+            }
+        });
         VBox content = new VBox(
                 18,
                 heading,

@@ -35,14 +35,14 @@ public class COMPONETS {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Button themeToggle = THEAME.createToggleButton();
+//        Button themeToggle = THEAME.createToggleButton();
         StackPane profilePicture = createProfilePicture();
 
         HBox header = new HBox(
                 15,
                 welcomeBox,
                 spacer,
-                themeToggle,
+//                themeToggle,
                 profilePicture
         );
 
