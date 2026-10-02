@@ -1,5 +1,6 @@
 package com.aniruddho_roy.delete.delete.Screen;
 
+import com.aniruddho_roy.delete.delete.Backend.Auth;
 import com.aniruddho_roy.delete.delete.additional.CONSTANTS;
 import com.aniruddho_roy.delete.delete.additional.LIB;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
@@ -165,12 +166,8 @@ public class LoginScreen extends VBox {
             }
 
             // Temporary local validation until backend authentication is added.
-            if (username.equals("admin") && password.equals("1234")) {
-                setMessageStyle(
-                        messageLabel,
-                        "Login successful!",
-                        "message-success"
-                );
+            Auth auth = new Auth();
+            if(auth.login(username,password)){
                 navigator.loadUserDashboardScreen();
             } else {
                 setMessageStyle(

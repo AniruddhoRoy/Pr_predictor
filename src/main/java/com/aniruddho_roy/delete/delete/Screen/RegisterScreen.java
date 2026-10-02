@@ -1,5 +1,6 @@
 package com.aniruddho_roy.delete.delete.Screen;
 
+import com.aniruddho_roy.delete.delete.Backend.Auth;
 import com.aniruddho_roy.delete.delete.additional.CONSTANTS;
 import com.aniruddho_roy.delete.delete.additional.LIB;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
@@ -21,6 +22,7 @@ import javafx.scene.text.FontWeight;
 public class RegisterScreen extends VBox {
 
     private final NAVIGATOR navigator;
+    private final Auth auth = new Auth();
 
     public RegisterScreen(NAVIGATOR navigator) {
         this.navigator = navigator;
@@ -212,11 +214,39 @@ public class RegisterScreen extends VBox {
                 return;
             }
 
-            setMessage(
-                    statusLabel,
-                    "Registration is valid. Account creation will be connected to the backend.",
-                    "message-success"
+            int result = auth.register(
+                    fullName,
+                    username,
+                    email,
+                    password
             );
+
+            if (result == 201) {
+
+                setMessage(
+                        statusLabel,
+                        "Account created successfully.",
+                        "message-success"
+                );
+
+                navigator.loadUserDashboardScreen();
+
+            } else if (result == 409) {
+
+                setMessage(
+                        statusLabel,
+                        "Username or email is already registered.",
+                        "message-error"
+                );
+
+            } else {
+
+                setMessage(
+                        statusLabel,
+                        "Could not create account. Please try again.",
+                        "message-error"
+                );
+            }
         });
 
         Label accountPrompt = new Label("Already have an account?");

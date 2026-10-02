@@ -1,6 +1,6 @@
 package com.aniruddho_roy.delete.delete.Screen;
 
-import com.aniruddho_roy.delete.delete.Backend.Predictions;
+//import com.aniruddho_roy.delete.delete.Backend.Predictions;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -186,8 +186,8 @@ public class NewPredictionScreen extends DashboardBase {
                         "Features are valid. Ready for backend analysis."
                 );
             }
-            String probability = new Predictions().Predict(url);
-
+//            String probability = new Predictions().Predict(url);
+                String probability = "89.4";
             navigator.loadPredictionResultScreen("test","test",0.5,probability);
         });
 
