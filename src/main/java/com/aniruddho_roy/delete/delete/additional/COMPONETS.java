@@ -1,6 +1,10 @@
 package com.aniruddho_roy.delete.delete.additional;
 
 import com.aniruddho_roy.delete.delete.Auth.TokenStorage;
+import com.aniruddho_roy.delete.delete.Backend.Predictions;
+import com.aniruddho_roy.delete.delete.Backend.Profile;
+import com.fasterxml.jackson.databind.JsonNode;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,15 +18,18 @@ import javafx.scene.text.FontWeight;
 
 
 import java.util.List;
+import java.util.Locale;
 
 public class COMPONETS {
-    public HBox createHeader() {
+    private final Profile profileApi = new Profile();
+    private final Label welcomeLabel = new Label(CONSTANTS.WELCOME_LABEL);
+    private final Label initialsLabel = new Label("?");
+    public HBox createHeader(NAVIGATOR navigator) {
 
         VBox welcomeBox = new VBox(4);
 
-        Label welcome = new Label("Hello, Aniruddho");
-        welcome.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        welcome.getStyleClass().add("heading");
+        welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        welcomeLabel.getStyleClass().add("heading");
 
         Label description = new Label(
                 "Here is an overview of your pull-request predictions."
@@ -30,52 +37,92 @@ public class COMPONETS {
         description.setFont(Font.font("Arial", 14));
         description.getStyleClass().add("muted-text");
 
-        welcomeBox.getChildren().addAll(welcome, description);
+        welcomeBox.getChildren().addAll(welcomeLabel, description);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-//        Button themeToggle = THEAME.createToggleButton();
-        StackPane profilePicture = createProfilePicture();
+        // Button themeToggle = THEAME.createToggleButton();
+        StackPane profilePicture = createProfilePicture(navigator);
 
         HBox header = new HBox(
                 15,
                 welcomeBox,
                 spacer,
-//                themeToggle,
+                // themeToggle,
                 profilePicture
         );
 
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(15, 20, 15, 20));
-
         header.getStyleClass().addAll("surface-card", "header-card");
+
+        loadProfileName();
 
         return header;
     }
-    public StackPane createProfilePicture() {
+    public StackPane createProfilePicture(NAVIGATOR navigator) {
 
         Circle circle = new Circle(25);
         circle.setStrokeWidth(2);
         circle.getStyleClass().add("profile-circle");
 
-        Label initials = new Label("AR");
-        initials.setFont(
-                Font.font("Arial", FontWeight.BOLD, 15)
-        );
-        initials.getStyleClass().add("profile-initials");
+        initialsLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        initialsLabel.getStyleClass().add("profile-initials");
 
-        StackPane profile = new StackPane(circle, initials);
+        StackPane profile = new StackPane(circle, initialsLabel);
         profile.setCursor(Cursor.HAND);
 
         profile.setOnMouseClicked(event -> {
-            System.out.println("Open profile page");
-
-            // Add your navigator method:
-            // navigator.loadProfileScreen();
+            navigator.loadProfileScreen(); // use your navigator's actual method name
         });
 
         return profile;
+    }
+    // =========================================================
+// Load the signed-in user's name (off the FX thread)
+// =========================================================
+
+    private void loadProfileName() {
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() {
+                return profileApi.getFullName();
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            String fullName = task.getValue();
+
+            if (fullName == null) {
+                return; // keep the "Hello" / "?" placeholders
+            }
+
+            String[] parts = fullName.trim().split("\\s+");
+
+            welcomeLabel.setText("Hello, " + parts[0]);
+            initialsLabel.setText(buildInitials(parts));
+        });
+
+        // on failure, leave the placeholders as they are
+
+        Thread thread = new Thread(task, "profile-loader");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private String buildInitials(String[] nameParts) {
+
+        String first = nameParts[0].substring(0, 1);
+
+        if (nameParts.length == 1) {
+            return first.toUpperCase();
+        }
+
+        String last = nameParts[nameParts.length - 1].substring(0, 1);
+
+        return (first + last).toUpperCase();
     }
     public VBox createSidebar(NAVIGATOR navigator) {
 
@@ -524,87 +571,98 @@ public class COMPONETS {
     /*
      * Recent predictions
      */
-    public VBox createPreviousPredictions() {
+    public VBox createPreviousPredictions(NAVIGATOR navigator) {
 
         Label heading = new Label("Recent Predictions");
-        heading.setFont(
-                Font.font("Arial", FontWeight.BOLD, 18)
-        );
+        heading.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         heading.getStyleClass().add("heading");
 
         VBox predictionList = new VBox(10);
 
-        List<String[]> predictions = List.of(
-                new String[]{
-                        "spring-projects/spring",
-                        "#32541",
-                        "87%"
-                },
-                new String[]{
-                        "openjdk/jdk",
-                        "#21430",
-                        "74%"
-                },
-                new String[]{
-                        "microsoft/vscode",
-                        "#22801",
-                        "63%"
-                },
-                new String[]{
-                        "facebook/react",
-                        "#30125",
-                        "91%"
-                },
-                new String[]{
-                        "tensorflow/tensorflow",
-                        "#72940",
-                        "58%"
-                }
-        );
+        Label statusLabel = new Label("Loading...");
+        statusLabel.getStyleClass().add("muted-text");
+        statusLabel.setWrapText(true);
+        predictionList.getChildren().add(statusLabel);
 
-        for (String[] prediction : predictions) {
-            predictionList.getChildren().add(
-                    createPredictionItem(
-                            prediction[0],
-                            prediction[1],
-                            prediction[2]
-                    )
-            );
-        }
+        loadRecentPredictions(predictionList, statusLabel);
 
-        Button viewAllButton =
-                new Button("View Full History");
-
+        Button viewAllButton = new Button("View Full History");
         viewAllButton.setMaxWidth(Double.MAX_VALUE);
         viewAllButton.setPrefHeight(40);
         viewAllButton.setCursor(Cursor.HAND);
         viewAllButton.getStyleClass().add("secondary-button");
 
         viewAllButton.setOnAction(event -> {
-            System.out.println("Open complete history");
-
-            // navigator.loadHistoryScreen();
+            navigator.loadHistoryScreen(); // use your navigator's actual method name
         });
 
-        VBox recentCard = new VBox(
-                15,
-                heading,
-                predictionList,
-                viewAllButton
-        );
+        VBox recentCard = new VBox(15, heading, predictionList, viewAllButton);
 
         recentCard.setPrefWidth(285);
         recentCard.setMinWidth(285);
         recentCard.setPadding(new Insets(20));
-
-        recentCard.getStyleClass().addAll(
-                "surface-card",
-                "recent-card"
-        );
+        recentCard.getStyleClass().addAll("surface-card", "recent-card");
 
         return recentCard;
     }
+    private void loadRecentPredictions(VBox predictionList, Label statusLabel) {
+        Predictions predictionsApi = new Predictions();
 
+        Task<JsonNode> task = new Task<>() {
+            @Override
+            protected JsonNode call() {
+                return predictionsApi.getHistory(null, 5);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            JsonNode items = task.getValue();
+            predictionList.getChildren().clear();
+
+            if (items == null || !items.isArray() || items.isEmpty()) {
+                statusLabel.setText("No predictions yet.");
+                predictionList.getChildren().add(statusLabel);
+                return;
+            }
+
+            for (JsonNode item : items) {
+                JsonNode repo = item.path("repository");
+                JsonNode pr = item.path("pullRequest");
+
+                String repository = repo.path("owner").asText("?")
+                        + "/" + repo.path("name").asText("?");
+                String prNumber = "#" + pr.path("number").asText("?");
+
+                // mergeProbability is null for PR_QUALITY requests
+                String probability = "-";
+                if (item.hasNonNull("mergeProbability")) {
+                    probability = String.format(Locale.US, "%.0f%%",
+                            item.get("mergeProbability").asDouble());
+                } else if (item.hasNonNull("qualityScore")) {
+                    probability = String.format(Locale.US, "%.0f%%",
+                            item.get("qualityScore").asDouble());
+                }
+
+                predictionList.getChildren().add(
+                        createPredictionItem(repository, prNumber, probability)
+                );
+            }
+        });
+
+        task.setOnFailed(e -> {
+            Throwable error = task.getException();
+            statusLabel.setText(
+                    error != null && error.getMessage() != null
+                            ? error.getMessage()
+                            : "Unable to load recent predictions."
+            );
+            predictionList.getChildren().setAll(statusLabel);
+        });
+
+        Thread thread = new Thread(task, "recent-predictions-loader");
+        thread.setDaemon(true);
+        thread.start();
+    }
     public HBox createPredictionItem(
             String repository,
             String pullRequest,

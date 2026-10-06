@@ -1,5 +1,6 @@
 package com.aniruddho_roy.delete.delete.Backend;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -162,6 +163,30 @@ public class Profile extends Base {
 
             e.printStackTrace();
             return -1;
+        }
+    }
+    // import com.fasterxml.jackson.databind.JsonNode;
+
+    public String getFullName() {
+
+        try {
+
+            HttpResponse<String> response =
+                    get_authenticated_request("/me");
+
+            if (response.statusCode() != 200) {
+                return null; // 401 = expired token, other = server problem
+            }
+
+            JsonNode json = mapper.readTree(response.body());
+            String fullName = json.path("fullName").asText("").trim();
+
+            return fullName.isEmpty() ? null : fullName;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return null;
         }
     }
 }

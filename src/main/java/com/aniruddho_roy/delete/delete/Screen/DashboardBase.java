@@ -26,10 +26,10 @@ public class DashboardBase extends BorderPane {
         getStyleClass().addAll("app-screen", "dashboard-screen");
         setPadding(new Insets(20));
 
-        HBox header = new COMPONETS().createHeader();
+        HBox header = new COMPONETS().createHeader(navigator);
         VBox sidebar = new COMPONETS().createSidebar(navigator);
         ScrollPane centerContent = new ScrollPane();
-        VBox recentPredictions = new COMPONETS().createPreviousPredictions();
+        VBox recentPredictions = new COMPONETS().createPreviousPredictions(navigator);
 
         setTop(header);
         setLeft(sidebar);

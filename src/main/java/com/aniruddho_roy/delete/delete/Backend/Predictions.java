@@ -261,4 +261,38 @@ public class Predictions extends Base {
             return body;
         }
     }
+    // =========================================================
+// GET /history?search=...&limit=...
+// =========================================================
+
+    public JsonNode getHistory(String search, int limit) {
+
+        try {
+
+            int safeLimit = Math.max(1, Math.min(limit, 100)); // API allows 1-100
+
+            StringBuilder url = new StringBuilder("/history?limit=")
+                    .append(safeLimit);
+
+            if (search != null && !search.isBlank()) {
+                url.append("&search=")
+                        .append(URLEncoder.encode(search.trim(), StandardCharsets.UTF_8));
+            }
+
+            HttpResponse<String> response =
+                    get_authenticated_request(url.toString());
+
+            checkResponse(response);
+
+            return mapper.readTree(response.body());
+
+        } catch (RuntimeException e) {
+
+            throw e;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException("Unable to load prediction history.", e);
+        }
+    }
 }
