@@ -4,9 +4,9 @@ import com.aniruddho_roy.delete.delete.Backend.Subscription;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -188,7 +188,8 @@ public class ProfileScreen extends DashboardBase {
                 currentBox,
                 fields,
                 saveButton,
-                status
+                status,
+                createPasswordCard()   // new
         );
 
         content.setPadding(new Insets(25));
@@ -265,25 +266,36 @@ public class ProfileScreen extends DashboardBase {
 
     private VBox createCurrentSubscriptionCard(Subscription.CurrentSubscription current) {
 
-        Label sectionTitle = new Label("Current Subscription");
-        sectionTitle.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        sectionTitle.getStyleClass().add("heading");
-
-        Label planLabel = new Label(current.planName() + " plan");
-        planLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        // Left side: plan info
+        Label planLabel = new Label("Current subscription: " + current.planName());
+        planLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         planLabel.getStyleClass().add("stat-value");
 
-        Label statusLabel = new Label("Status: " + current.status());
-        statusLabel.getStyleClass().add("muted-text");
-
-        Label startedLabel = new Label("Started: " + current.startedAt());
-        startedLabel.getStyleClass().add("muted-text");
-
-        Label creditsLabel = new Label(
-                current.creditsUsed() + " of " + current.monthlyCredits()
-                        + " credits used this month"
+        Label infoLabel = new Label(
+                current.status() + " • Started " + current.startedAt()
         );
+        infoLabel.setFont(Font.font("Arial", 11));
+        infoLabel.getStyleClass().add("muted-text");
+
+        VBox leftBox = new VBox(2, planLabel, infoLabel);
+        leftBox.setAlignment(Pos.CENTER_LEFT);
+
+        // Right side: credits
+        Label creditsLabel = new Label(
+                current.creditsUsed() + " / " + current.monthlyCredits()
+                        + " credits used"
+        );
+        creditsLabel.setFont(Font.font("Arial", 11));
         creditsLabel.getStyleClass().add("muted-text");
+
+        Label remainingLabel = new Label(current.creditsRemaining() + " left");
+        remainingLabel.setFont(Font.font("Arial", 11));
+        remainingLabel.getStyleClass().add("muted-text");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox creditsRow = new HBox(6, creditsLabel, spacer, remainingLabel);
 
         ProgressBar creditsBar = new ProgressBar(
                 current.monthlyCredits() == 0
@@ -291,25 +303,124 @@ public class ProfileScreen extends DashboardBase {
                         : (double) current.creditsUsed() / current.monthlyCredits()
         );
         creditsBar.setMaxWidth(Double.MAX_VALUE);
+        creditsBar.setPrefHeight(8);
 
-        Label remainingLabel = new Label(
-                current.creditsRemaining() + " credits remaining"
-        );
-        remainingLabel.getStyleClass().add("muted-text");
+        VBox rightBox = new VBox(4, creditsRow, creditsBar);
+        rightBox.setAlignment(Pos.CENTER_LEFT);
+        rightBox.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(rightBox, Priority.ALWAYS);
 
-        VBox card = new VBox(
-                10,
-                sectionTitle,
-                planLabel,
-                statusLabel,
-                startedLabel,
-                creditsLabel,
-                creditsBar,
-                remainingLabel
-        );
+        HBox row = new HBox(30, leftBox, rightBox);
+        row.setAlignment(Pos.CENTER_LEFT);
 
-        card.setPadding(new Insets(20));
+        VBox card = new VBox(row);
+        card.setPadding(new Insets(10, 16, 10, 16));
         card.setMaxWidth(Double.MAX_VALUE);
+        card.getStyleClass().add("surface-card");
+
+        return card;
+    }
+    private VBox createPasswordCard() {
+
+        Label title = new Label("Change password");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 13));
+        title.getStyleClass().add("heading");
+
+        PasswordField currentField = new PasswordField();
+        currentField.setPromptText("Current password");
+        currentField.getStyleClass().add("login-input");
+
+        PasswordField newField = new PasswordField();
+        newField.setPromptText("New password (4+ chars)");
+        newField.getStyleClass().add("login-input");
+
+        PasswordField confirmField = new PasswordField();
+        confirmField.setPromptText("Confirm new password");
+        confirmField.getStyleClass().add("login-input");
+
+        HBox.setHgrow(currentField, Priority.ALWAYS);
+        HBox.setHgrow(newField, Priority.ALWAYS);
+        HBox.setHgrow(confirmField, Priority.ALWAYS);
+
+        HBox fieldsRow = new HBox(8, currentField, newField, confirmField);
+        fieldsRow.setAlignment(Pos.CENTER_LEFT);
+
+        Button changeButton = new Button("Change Password");
+        changeButton.setPrefHeight(40);
+        changeButton.getStyleClass().add("primary-button");
+
+        Label passwordStatus = new Label();
+        passwordStatus.setWrapText(true);
+        passwordStatus.getStyleClass().add("muted-text");
+
+        HBox buttonRow = new HBox(12, changeButton, passwordStatus);
+        buttonRow.setAlignment(Pos.CENTER_LEFT);
+
+        changeButton.setOnAction(event -> {
+
+            String current = currentField.getText();
+            String newPassword = newField.getText();
+            String confirm = confirmField.getText();
+
+            if (current.isEmpty()) {
+                passwordStatus.setText("Please enter your current password.");
+                return;
+            }
+
+            if (newPassword.length() < 4 || newPassword.length() > 128) {
+                passwordStatus.setText(
+                        "New password must be 4 to 128 characters."
+                );
+                return;
+            }
+
+            if (!newPassword.equals(confirm)) {
+                passwordStatus.setText("New passwords do not match.");
+                return;
+            }
+
+            changeButton.setDisable(true);
+            passwordStatus.setText("Changing password...");
+
+            Thread thread = new Thread(() -> {
+
+                int result = profileApi.changePassword(current, newPassword);
+//                int result = 1;
+                Platform.runLater(() -> {
+
+                    changeButton.setDisable(false);
+
+                    switch (result) {
+                        case 200 -> {
+                            passwordStatus.setText(
+                                    "Password changed successfully."
+                            );
+                            currentField.clear();
+                            newField.clear();
+                            confirmField.clear();
+                        }
+                        case 400 -> passwordStatus.setText(
+                                "Current password is incorrect."
+                        );
+                        case 401 -> passwordStatus.setText(
+                                "Your session has expired. Please login again."
+                        );
+                        case 422 -> passwordStatus.setText(
+                                "Invalid password length."
+                        );
+                        default -> passwordStatus.setText(
+                                "Could not change password."
+                        );
+                    }
+                });
+            }, "change-password");
+
+            thread.setDaemon(true);
+            thread.start();
+        });
+
+        VBox card = new VBox(8, title, fieldsRow, buttonRow);
+        card.setPadding(new Insets(10, 16, 10, 16));
         card.getStyleClass().add("surface-card");
 
         return card;

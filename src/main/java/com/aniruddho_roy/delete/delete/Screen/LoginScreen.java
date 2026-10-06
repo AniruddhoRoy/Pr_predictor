@@ -178,8 +178,8 @@ public class LoginScreen extends VBox {
             }
         });
 
-        Label demoLabel = new Label("Demo access: admin / 1234");
-        demoLabel.getStyleClass().add("auth-demo");
+//        Label demoLabel = new Label("Demo access: admin / 1234");
+//        demoLabel.getStyleClass().add("auth-demo");
 
         Label registerPrompt = new Label("New to the workspace?");
         registerPrompt.getStyleClass().add("auth-form-subtitle");
@@ -210,7 +210,7 @@ public class LoginScreen extends VBox {
                 createField("Password", passwordField),
                 loginButton,
                 messageLabel,
-                demoLabel,
+//                demoLabel,
                 registerRow,
                 backButton
         );

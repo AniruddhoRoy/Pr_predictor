@@ -138,4 +138,30 @@ public class Profile extends Base {
             return -1;
         }
     }
+    public int changePassword(
+            String currentPassword,
+            String newPassword
+    ) {
+
+        try {
+
+            // Passwords are sent exactly as typed (no trim)
+            ObjectNode body = mapper.createObjectNode();
+            body.put("currentPassword", currentPassword);
+            body.put("newPassword", newPassword);
+
+            HttpResponse<String> response =
+                    post_authenticated_request(
+                            "/change-password",
+                            body.toString()
+                    );
+
+            return response.statusCode();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

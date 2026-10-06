@@ -61,11 +61,11 @@ public class SettingsScreen extends DashboardBase {
 
         ComboBox<String> defaultInput = new ComboBox<>(
                 FXCollections.observableArrayList(
-                        "GitHub PR URL",
-                        "Manual Features"
+                        "GitHub PR URL"
                 )
         );
         defaultInput.getSelectionModel().select("GitHub PR URL");
+
 
         VBox settingsList = new VBox(
                 createSettingRow(
@@ -85,7 +85,8 @@ public class SettingsScreen extends DashboardBase {
                 ),
                 createSettingRow(
                         "Default input mode",
-                        "Choose URL or manual feature input.",
+                        "Currently only GitHub PR URL is supported. "
+                                + "Manual feature input is coming soon.",
                         defaultInput
                 )
         );
@@ -139,20 +140,7 @@ public class SettingsScreen extends DashboardBase {
 
 
             // Input mode
-            if ("MANUAL_FEATURES".equals(
-                    settings.getDefaultInputMode()
-            )) {
 
-                defaultInput
-                        .getSelectionModel()
-                        .select("Manual Features");
-
-            } else {
-
-                defaultInput
-                        .getSelectionModel()
-                        .select("GitHub PR URL");
-            }
         }
 
 
@@ -191,20 +179,7 @@ public class SettingsScreen extends DashboardBase {
             }
 
 
-            String selectedInput;
-
-            if ("Manual Features".equals(
-                    defaultInput.getValue()
-            )) {
-
-                selectedInput =
-                        "MANUAL_FEATURES";
-
-            } else {
-
-                selectedInput =
-                        "GITHUB_URL";
-            }
+            String selectedInput = "GITHUB_URL";
 
 
             int result =
@@ -245,10 +220,11 @@ public class SettingsScreen extends DashboardBase {
                 18,
                 heading,
                 description,
-//                createCurrentSubscriptionCard(),
                 settingsList,
+
                 saveButton,
                 status
+//                createPasswordCard()   // new
         );
 
         content.setPadding(new Insets(25));
@@ -307,5 +283,6 @@ public class SettingsScreen extends DashboardBase {
 
         return row;
     }
+
 
 }
