@@ -1,11 +1,10 @@
 package com.aniruddho_roy.delete.delete.Screen;
 
+import com.aniruddho_roy.delete.delete.Backend.Subscription;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -17,6 +16,10 @@ import com.aniruddho_roy.delete.delete.Backend.User;
 public class ProfileScreen extends DashboardBase {
     private final Profile profileApi =
             new Profile();
+
+
+    private final Subscription subscriptionApi = new Subscription();
+    private final VBox currentBox = new VBox();
 
     public ProfileScreen(NAVIGATOR navigator) {
         this(navigator, false);
@@ -177,10 +180,12 @@ public class ProfileScreen extends DashboardBase {
             }
         });
 
+
         VBox content = new VBox(
                 18,
                 heading,
                 description,
+                currentBox,
                 fields,
                 saveButton,
                 status
@@ -205,6 +210,8 @@ public class ProfileScreen extends DashboardBase {
                 "transparent-scroll-pane"
         );
 
+        loadSubscription();
+
         return scrollPane;
     }
 
@@ -223,5 +230,88 @@ public class ProfileScreen extends DashboardBase {
 
         box.setPrefWidth(280);
         return box;
+    }
+    private void loadSubscription() {
+
+        Label loading = new Label("Loading subscription...");
+        loading.getStyleClass().add("muted-text");
+        currentBox.getChildren().setAll(loading);
+
+        Thread thread = new Thread(() -> {
+
+            Subscription.CurrentSubscription current =
+                    subscriptionApi.getCurrentSubscription();
+
+            Platform.runLater(() -> {
+
+                if (current == null) {
+                    Label error = new Label(
+                            "Could not load your current subscription."
+                    );
+                    error.getStyleClass().add("muted-text");
+                    currentBox.getChildren().setAll(error);
+                    return;
+                }
+
+                currentBox.getChildren().setAll(
+                        createCurrentSubscriptionCard(current)
+                );
+            });
+        }, "profile-subscription-loader");
+
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private VBox createCurrentSubscriptionCard(Subscription.CurrentSubscription current) {
+
+        Label sectionTitle = new Label("Current Subscription");
+        sectionTitle.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        sectionTitle.getStyleClass().add("heading");
+
+        Label planLabel = new Label(current.planName() + " plan");
+        planLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        planLabel.getStyleClass().add("stat-value");
+
+        Label statusLabel = new Label("Status: " + current.status());
+        statusLabel.getStyleClass().add("muted-text");
+
+        Label startedLabel = new Label("Started: " + current.startedAt());
+        startedLabel.getStyleClass().add("muted-text");
+
+        Label creditsLabel = new Label(
+                current.creditsUsed() + " of " + current.monthlyCredits()
+                        + " credits used this month"
+        );
+        creditsLabel.getStyleClass().add("muted-text");
+
+        ProgressBar creditsBar = new ProgressBar(
+                current.monthlyCredits() == 0
+                        ? 0
+                        : (double) current.creditsUsed() / current.monthlyCredits()
+        );
+        creditsBar.setMaxWidth(Double.MAX_VALUE);
+
+        Label remainingLabel = new Label(
+                current.creditsRemaining() + " credits remaining"
+        );
+        remainingLabel.getStyleClass().add("muted-text");
+
+        VBox card = new VBox(
+                10,
+                sectionTitle,
+                planLabel,
+                statusLabel,
+                startedLabel,
+                creditsLabel,
+                creditsBar,
+                remainingLabel
+        );
+
+        card.setPadding(new Insets(20));
+        card.setMaxWidth(Double.MAX_VALUE);
+        card.getStyleClass().add("surface-card");
+
+        return card;
     }
 }

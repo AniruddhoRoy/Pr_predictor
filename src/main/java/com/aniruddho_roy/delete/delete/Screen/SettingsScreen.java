@@ -5,11 +5,7 @@ import com.aniruddho_roy.delete.delete.additional.THEAME;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -249,6 +245,7 @@ public class SettingsScreen extends DashboardBase {
                 18,
                 heading,
                 description,
+//                createCurrentSubscriptionCard(),
                 settingsList,
                 saveButton,
                 status
@@ -310,4 +307,5 @@ public class SettingsScreen extends DashboardBase {
 
         return row;
     }
+
 }

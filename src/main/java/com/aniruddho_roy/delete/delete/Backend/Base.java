@@ -38,7 +38,24 @@ public abstract class Base {
 
         return execute_request(request);
     }
+    protected HttpResponse<String> post_authenticated_request(
+            String url,
+            String body
+    ) {
 
+        String token = TokenStorage.getToken();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL + url))
+                .version(HttpClient.Version.HTTP_1_1)
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
+
+        return execute_request(request);
+    }
 
     protected HttpResponse<String> get_authenticated_request(
             String url

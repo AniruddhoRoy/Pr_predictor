@@ -64,7 +64,24 @@ public class NewPredictionScreen extends DashboardBase {
                 predictionTypeLabel,
                 predictionType
         );
+        ComboBox<String> modelSelector = new ComboBox<>(
+                FXCollections.observableArrayList(
+                        "Model 1 - Logistic Regression",
+                        "Model 2 - Random Forest",
+                        "Model 3 - K-Nearest Neighbors",
+                        "Model 4 - Decision Tree",
+                        "Model 5 - SGD Classifier",
+                        "Model 6 - Extra Trees"
+                )
+        );
+        modelSelector.getSelectionModel().selectFirst();
+        modelSelector.setMaxWidth(Double.MAX_VALUE);
 
+        VBox modelBox = new VBox(
+                8,
+                new Label("Model"),
+                modelSelector
+        );
 //        RadioButton githubUrlOption =
 //                new RadioButton("GitHub PR URL");
 //
@@ -196,6 +213,7 @@ public class NewPredictionScreen extends DashboardBase {
                 heading,
                 description,
                 predictionTypeBox,
+                modelBox,          // new
 //                inputOptions,
                 githubUrlBox,
                 manualFeatureBox,
