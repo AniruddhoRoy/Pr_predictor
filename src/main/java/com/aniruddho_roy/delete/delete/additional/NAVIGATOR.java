@@ -6,6 +6,7 @@ import com.aniruddho_roy.delete.delete.Backend.Profile;
 import com.aniruddho_roy.delete.delete.Backend.User;
 import com.aniruddho_roy.delete.delete.Screen.*;
 import com.aniruddho_roy.delete.delete.Storage.APPLICATION_STORE;
+import com.fasterxml.jackson.databind.JsonNode;
 import javafx.scene.layout.BorderPane;
 
 public class NAVIGATOR {
@@ -85,12 +86,14 @@ public class NAVIGATOR {
         root.setCenter(new SettingsScreen(this));
     }
     public void loadPredictionResultScreen(
-            String repository,
-            String pullRequest,
-            double mergeProbability,
-            String quality
+            JsonNode result
     ){
-//        activePage = Page.NEW_PREDICTION
-        root.setCenter((new PredictionResultScreen(this, APPLICATION_STORE.isUserSubscribed,repository,pullRequest,mergeProbability,quality)));
+        root.setCenter(
+                new PredictionResultScreen(
+                        this,
+                        APPLICATION_STORE.isUserSubscribed,
+                        result
+                )
+        );
     }
 }

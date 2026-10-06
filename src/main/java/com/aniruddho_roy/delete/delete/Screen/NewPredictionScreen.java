@@ -1,36 +1,77 @@
 package com.aniruddho_roy.delete.delete.Screen;
 
-//import com.aniruddho_roy.delete.delete.Backend.Predictions;
+import com.aniruddho_roy.delete.delete.Backend.Predictions;
 import com.aniruddho_roy.delete.delete.additional.NAVIGATOR;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class NewPredictionScreen extends DashboardBase {
+public class NewPredictionScreen
+        extends DashboardBase {
 
-    public NewPredictionScreen(NAVIGATOR navigator) {
-        this(navigator, false);
+
+    private final Predictions predictions =
+            new Predictions();
+
+
+    // =========================================================
+    // Constructor
+    // =========================================================
+
+    public NewPredictionScreen(
+            NAVIGATOR navigator
+    ) {
+
+        this(
+                navigator,
+                false
+        );
     }
+
 
     public NewPredictionScreen(
             NAVIGATOR navigator,
             boolean subscribed
     ) {
-        super(navigator, subscribed);
 
-        // Only the center area changes
-        setCenter(createPredictionCenter());
+        super(
+                navigator,
+                subscribed
+        );
 
+
+        setCenter(
+                createPredictionCenter()
+        );
     }
+
+
+    // =========================================================
+    // Main UI
+    // =========================================================
 
     private ScrollPane createPredictionCenter() {
 
-        Label heading = new Label("New Prediction");
+
+        // =====================================================
+        // Heading
+        // =====================================================
+
+        Label heading =
+                new Label(
+                        "New Prediction"
+                );
+
+
         heading.setFont(
                 javafx.scene.text.Font.font(
                         "Arial",
@@ -38,210 +79,1005 @@ public class NewPredictionScreen extends DashboardBase {
                         23
                 )
         );
-        heading.getStyleClass().add("heading");
 
-        Label description = new Label(
-                "Choose what you want to predict and provide pull-request data."
+
+        heading
+                .getStyleClass()
+                .add(
+                        "heading"
+                );
+
+
+        // =====================================================
+        // Description
+        // =====================================================
+
+        Label description =
+                new Label(
+                        "Choose what you want to predict, select a model, and provide a GitHub pull-request URL."
+                );
+
+
+        description
+                .getStyleClass()
+                .add(
+                        "muted-text"
+                );
+
+
+        description.setWrapText(
+                true
         );
-        description.getStyleClass().add("muted-text");
-        description.setWrapText(true);
 
-        ComboBox<String> predictionType = new ComboBox<>(
-                FXCollections.observableArrayList(
-                        "Merge Probability",
-                        "PR Quality",
-                        "Both"
-                )
+
+        // =====================================================
+        // Prediction Type
+        // =====================================================
+
+        ComboBox<String> predictionType =
+                new ComboBox<>(
+                        FXCollections.observableArrayList(
+//                                "Merge Probability",
+//                                "PR Quality",
+                                "Both"
+                        )
+                );
+
+
+        predictionType
+                .getSelectionModel()
+                .selectFirst();
+
+
+        predictionType.setMaxWidth(
+                Double.MAX_VALUE
         );
-        predictionType.getSelectionModel().selectFirst();
-        predictionType.setMaxWidth(Double.MAX_VALUE);
 
-        Label predictionTypeLabel =
-                new Label("Prediction type");
 
-        VBox predictionTypeBox = new VBox(
-                8,
-                predictionTypeLabel,
-                predictionType
+        VBox predictionTypeBox =
+                new VBox(
+                        8,
+                        new Label(
+                                "Prediction type"
+                        ),
+                        predictionType
+                );
+
+
+        // =====================================================
+        // Model Selector
+        // =====================================================
+
+        ComboBox<ModelItem> modelSelector =
+                new ComboBox<>();
+
+
+        modelSelector.setMaxWidth(
+                Double.MAX_VALUE
         );
-        ComboBox<String> modelSelector = new ComboBox<>(
-                FXCollections.observableArrayList(
-                        "Model 1 - Logistic Regression",
-                        "Model 2 - Random Forest",
-                        "Model 3 - K-Nearest Neighbors",
-                        "Model 4 - Decision Tree",
-                        "Model 5 - SGD Classifier",
-                        "Model 6 - Extra Trees"
-                )
+
+
+        modelSelector.setPromptText(
+                "Loading models..."
         );
-        modelSelector.getSelectionModel().selectFirst();
-        modelSelector.setMaxWidth(Double.MAX_VALUE);
 
-        VBox modelBox = new VBox(
-                8,
-                new Label("Model"),
-                modelSelector
-        );
-//        RadioButton githubUrlOption =
-//                new RadioButton("GitHub PR URL");
-//
-//        RadioButton manualFeatureOption =
-//                new RadioButton("Manual Features");
 
-//        ToggleGroup inputGroup = new ToggleGroup();
-//
-//        githubUrlOption.setToggleGroup(inputGroup);
-//        manualFeatureOption.setToggleGroup(inputGroup);
-//        githubUrlOption.setSelected(true);
+        VBox modelBox =
+                new VBox(
+                        8,
+                        new Label(
+                                "Model"
+                        ),
+                        modelSelector
+                );
 
-//        HBox inputOptions = new HBox(
-//                20,
-//                githubUrlOption,
-//                manualFeatureOption
-//        );
-//        inputOptions.setAlignment(Pos.CENTER_LEFT);
 
-        TextField githubUrlField = new TextField();
+        // =====================================================
+        // GitHub PR URL
+        // =====================================================
+
+        TextField githubUrlField =
+                new TextField();
+
+
         githubUrlField.setPromptText(
                 "https://github.com/owner/repository/pull/123"
         );
-        githubUrlField.getStyleClass().add("login-input");
 
-        VBox githubUrlBox = new VBox(
-                8,
-                new Label("Pull-request URL"),
-                githubUrlField
+
+        githubUrlField
+                .getStyleClass()
+                .add(
+                        "login-input"
+                );
+
+
+        VBox githubUrlBox =
+                new VBox(
+                        8,
+                        new Label(
+                                "Pull-request URL"
+                        ),
+                        githubUrlField
+                );
+
+
+        // =====================================================
+        // Status
+        // =====================================================
+
+        Label statusLabel =
+                new Label();
+
+
+        statusLabel
+                .getStyleClass()
+                .add(
+                        "muted-text"
+                );
+
+
+        statusLabel.setWrapText(
+                true
         );
 
-        TextArea featureField = new TextArea();
-        featureField.setPromptText(
-                "Enter one feature per line:\n" +
-                        "changedFiles=12\n" +
-                        "additions=150\n" +
-                        "deletions=25\n" +
-                        "testsAdded=true"
-        );
-        featureField.setPrefRowCount(8);
-        featureField.setWrapText(true);
-        featureField.getStyleClass().add("login-input");
 
-        VBox manualFeatureBox = new VBox(
-                8,
-                new Label("Pull-request features"),
-                featureField
-        );
-
-        manualFeatureBox.setVisible(false);
-        manualFeatureBox.setManaged(false);
-
-//        inputGroup.selectedToggleProperty().addListener(
-//                (observable, oldValue, newValue) -> {
-//
-//                    boolean urlSelected =
-//                            newValue == githubUrlOption;
-//
-//                    githubUrlBox.setVisible(urlSelected);
-//                    githubUrlBox.setManaged(urlSelected);
-//
-//                    manualFeatureBox.setVisible(!urlSelected);
-//                    manualFeatureBox.setManaged(!urlSelected);
-//                }
-//        );
-
-        Label statusLabel = new Label();
-        statusLabel.getStyleClass().add("muted-text");
-        statusLabel.setWrapText(true);
+        // =====================================================
+        // Analyze Button
+        // =====================================================
 
         Button analyzeButton =
-                new Button("Analyze Pull Request");
-
-        analyzeButton.getStyleClass().add("primary-button");
-        analyzeButton.setMaxWidth(Double.MAX_VALUE);
-
-        analyzeButton.setOnAction(event -> {
-
-
-            String url = githubUrlField
-                    .getText()
-                    .trim();
-
-//            if (githubUrlOption.isSelected()) {
-
-
-
-                boolean validUrl = url.matches(
-                        "https?://github\\.com/[^/]+/[^/]+/pull/\\d+/?"
+                new Button(
+                        "Analyze Pull Request"
                 );
 
-                if (!validUrl) {
-                    statusLabel.setText(
-                            "Please enter a valid GitHub PR URL."
-                    );
-                    statusLabel.getStyleClass().add("message-error");
-                    return;
-                }
 
-                statusLabel.setText(
-                        "GitHub URL is valid. Ready for backend analysis."
+        analyzeButton
+                .getStyleClass()
+                .add(
+                        "primary-button"
                 );
 
-//            } else {
-//
-//                String features = featureField
-//                        .getText()
-//                        .trim();
-//
-//                if (features.isEmpty()) {
-//                    statusLabel.setText(
-//                            "Please enter pull-request features."
-//                    );
-//                    statusLabel.getStyleClass().add("message-error");
-//                    return;
-//                }
-//
-//                statusLabel.setText(
-//                        "Features are valid. Ready for backend analysis."
-//                );
-//            }
-//            String probability = new Predictions().Predict(url);
-                String probability = "89.4";
-            navigator.loadPredictionResultScreen("test","test",0.5,probability);
-        });
 
-        VBox centerContent = new VBox(
-                18,
-                heading,
-                description,
-                predictionTypeBox,
-                modelBox,          // new
-//                inputOptions,
-                githubUrlBox,
-                manualFeatureBox,
+        analyzeButton.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+
+        analyzeButton.setDisable(
+                true
+        );
+
+
+        // =====================================================
+        // Initial GET /models
+        // =====================================================
+
+        loadModels(
+                toApiPredictionType(
+                        predictionType.getValue()
+                ),
+                modelSelector,
                 analyzeButton,
                 statusLabel
         );
 
-        centerContent.setPadding(new Insets(25));
-        centerContent.setMaxWidth(Double.MAX_VALUE);
-        centerContent.getStyleClass().addAll(
-                "surface-card",
-                "dashboard-content"
+
+        // =====================================================
+        // Prediction Type Changed
+        // =====================================================
+
+        predictionType
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                oldValue,
+                                newValue
+                        ) -> {
+
+                            String apiType =
+                                    toApiPredictionType(
+                                            newValue
+                                    );
+
+
+                            loadModels(
+                                    apiType,
+                                    modelSelector,
+                                    analyzeButton,
+                                    statusLabel
+                            );
+                        }
+                );
+
+
+        // =====================================================
+        // Analyze Click
+        // =====================================================
+
+        analyzeButton.setOnAction(
+                event -> {
+
+
+                    clearError(
+                            statusLabel
+                    );
+
+
+                    // =========================================
+                    // Get URL
+                    // =========================================
+
+                    String url =
+                            githubUrlField
+                                    .getText()
+                                    .trim();
+
+
+                    // =========================================
+                    // Validate URL
+                    // =========================================
+
+                    boolean validUrl =
+                            url.matches(
+                                    "https?://github\\.com/[^/]+/[^/]+/pull/\\d+/?"
+                            );
+
+
+                    if (!validUrl) {
+
+                        showError(
+                                statusLabel,
+                                "Please enter a valid GitHub pull-request URL."
+                        );
+
+                        return;
+                    }
+
+
+                    // =========================================
+                    // Selected Model
+                    // =========================================
+
+                    ModelItem selectedModel =
+                            modelSelector
+                                    .getValue();
+
+
+                    if (selectedModel == null) {
+
+                        showError(
+                                statusLabel,
+                                "Please select a prediction model."
+                        );
+
+                        return;
+                    }
+
+
+                    // =========================================
+                    // Prediction Type
+                    // =========================================
+
+                    String apiPredictionType =
+                            toApiPredictionType(
+                                    predictionType.getValue()
+                            );
+
+
+                    // =========================================
+                    // Disable Form
+                    // =========================================
+
+                    setFormDisabled(
+                            true,
+                            analyzeButton,
+                            modelSelector,
+                            predictionType,
+                            githubUrlField
+                    );
+
+
+                    statusLabel.setText(
+                            "Analyzing pull request..."
+                    );
+
+
+                    // =========================================
+                    // POST /predict
+                    // =========================================
+
+                    Task<JsonNode> predictionTask =
+                            new Task<>() {
+
+                                @Override
+                                protected JsonNode call() {
+
+                                    return predictions.predict(
+                                            url,
+                                            apiPredictionType,
+                                            selectedModel.getModelId()
+                                    );
+                                }
+                            };
+
+
+                    // =========================================
+                    // SUCCESS
+                    // =========================================
+
+                    predictionTask.setOnSucceeded(
+                            workerStateEvent -> {
+
+
+                                setFormDisabled(
+                                        false,
+                                        analyzeButton,
+                                        modelSelector,
+                                        predictionType,
+                                        githubUrlField
+                                );
+
+
+                                clearError(
+                                        statusLabel
+                                );
+
+
+                                JsonNode result =
+                                        predictionTask
+                                                .getValue();
+
+
+                                // Safety check
+
+                                if (
+                                        result == null ||
+                                                result.isNull()
+                                ) {
+
+                                    showError(
+                                            statusLabel,
+                                            "The prediction server returned an empty result."
+                                    );
+
+                                    return;
+                                }
+
+
+                                statusLabel.setText(
+                                        "Prediction completed successfully."
+                                );
+
+
+                                // =================================
+                                // Pass COMPLETE API result
+                                // directly to result screen
+                                // =================================
+
+                                navigator
+                                        .loadPredictionResultScreen(
+                                                result
+                                        );
+                            }
+                    );
+
+
+                    // =========================================
+                    // FAILED
+                    // =========================================
+
+                    predictionTask.setOnFailed(
+                            workerStateEvent -> {
+
+
+                                setFormDisabled(
+                                        false,
+                                        analyzeButton,
+                                        modelSelector,
+                                        predictionType,
+                                        githubUrlField
+                                );
+
+
+                                Throwable exception =
+                                        predictionTask
+                                                .getException();
+
+
+                                String error;
+
+
+                                if (
+                                        exception == null ||
+                                                exception.getMessage() == null ||
+                                                exception.getMessage().isBlank()
+                                ) {
+
+                                    error =
+                                            "Prediction failed.";
+
+                                } else {
+
+                                    error =
+                                            exception.getMessage();
+                                }
+
+
+                                showError(
+                                        statusLabel,
+                                        error
+                                );
+                            }
+                    );
+
+
+                    // =========================================
+                    // Run Background Task
+                    // =========================================
+
+                    Thread thread =
+                            new Thread(
+                                    predictionTask
+                            );
+
+
+                    thread.setDaemon(
+                            true
+                    );
+
+
+                    thread.start();
+                }
         );
 
-        ScrollPane scrollPane =
-                new ScrollPane(centerContent);
 
-        scrollPane.setFitToWidth(true);
+        // =====================================================
+        // Main Content
+        // =====================================================
+
+        VBox centerContent =
+                new VBox(
+                        18,
+                        heading,
+                        description,
+                        predictionTypeBox,
+                        modelBox,
+                        githubUrlBox,
+                        analyzeButton,
+                        statusLabel
+                );
+
+
+        centerContent.setPadding(
+                new Insets(25)
+        );
+
+
+        centerContent.setMaxWidth(
+                Double.MAX_VALUE
+        );
+
+
+        centerContent
+                .getStyleClass()
+                .addAll(
+                        "surface-card",
+                        "dashboard-content"
+                );
+
+
+        // =====================================================
+        // ScrollPane
+        // =====================================================
+
+        ScrollPane scrollPane =
+                new ScrollPane(
+                        centerContent
+                );
+
+
+        scrollPane.setFitToWidth(
+                true
+        );
+
+
         scrollPane.setHbarPolicy(
                 ScrollPane.ScrollBarPolicy.NEVER
         );
+
+
         scrollPane.setVbarPolicy(
                 ScrollPane.ScrollBarPolicy.AS_NEEDED
         );
-        scrollPane.getStyleClass().add(
-                "transparent-scroll-pane"
-        );
+
+
+        scrollPane
+                .getStyleClass()
+                .add(
+                        "transparent-scroll-pane"
+                );
+
 
         return scrollPane;
+    }
+
+
+    // =========================================================
+    // GET /models
+    // =========================================================
+
+    private void loadModels(
+            String predictionType,
+            ComboBox<ModelItem> modelSelector,
+            Button analyzeButton,
+            Label statusLabel
+    ) {
+
+
+        modelSelector.setDisable(
+                true
+        );
+
+
+        analyzeButton.setDisable(
+                true
+        );
+
+
+        modelSelector
+                .getItems()
+                .clear();
+
+
+        modelSelector.setPromptText(
+                "Loading models..."
+        );
+
+
+        clearError(
+                statusLabel
+        );
+
+
+        statusLabel.setText(
+                "Loading available models..."
+        );
+
+
+        // =====================================================
+        // GET /models in background
+        // =====================================================
+
+        Task<List<ModelItem>> task =
+                new Task<>() {
+
+                    @Override
+                    protected List<ModelItem> call() {
+
+
+                        JsonNode response =
+                                predictions.getModels(
+                                        predictionType
+                                );
+
+
+                        List<ModelItem> models =
+                                new ArrayList<>();
+
+
+                        if (
+                                response != null &&
+                                        response.isArray()
+                        ) {
+
+
+                            for (
+                                    JsonNode model :
+                                    response
+                            ) {
+
+
+                                String modelId =
+                                        model
+                                                .path("modelId")
+                                                .asText();
+
+
+                                String code =
+                                        model
+                                                .path("code")
+                                                .asText();
+
+
+                                String name =
+                                        model
+                                                .path("name")
+                                                .asText();
+
+
+                                int creditCost =
+                                        model
+                                                .path("creditCost")
+                                                .asInt();
+
+
+                                // Ignore malformed model objects
+
+                                if (
+                                        modelId == null ||
+                                                modelId.isBlank() ||
+                                                name == null ||
+                                                name.isBlank()
+                                ) {
+
+                                    continue;
+                                }
+
+
+                                models.add(
+                                        new ModelItem(
+                                                modelId,
+                                                code,
+                                                name,
+                                                creditCost
+                                        )
+                                );
+                            }
+                        }
+
+
+                        return models;
+                    }
+                };
+
+
+        // =====================================================
+        // Model Loading Success
+        // =====================================================
+
+        task.setOnSucceeded(
+                event -> {
+
+
+                    List<ModelItem> models =
+                            task.getValue();
+
+
+                    modelSelector.setDisable(
+                            false
+                    );
+
+
+                    modelSelector
+                            .getItems()
+                            .setAll(
+                                    models
+                            );
+
+
+                    if (
+                            models == null ||
+                                    models.isEmpty()
+                    ) {
+
+
+                        modelSelector.setPromptText(
+                                "No models available"
+                        );
+
+
+                        analyzeButton.setDisable(
+                                true
+                        );
+
+
+                        showError(
+                                statusLabel,
+                                "Your current plan has no available model for this prediction type."
+                        );
+
+
+                        return;
+                    }
+
+
+                    modelSelector
+                            .getSelectionModel()
+                            .selectFirst();
+
+
+                    modelSelector.setPromptText(
+                            "Select model"
+                    );
+
+
+                    analyzeButton.setDisable(
+                            false
+                    );
+
+
+                    clearError(
+                            statusLabel
+                    );
+
+
+                    statusLabel.setText(
+                            ""
+                    );
+                }
+        );
+
+
+        // =====================================================
+        // Model Loading Failed
+        // =====================================================
+
+        task.setOnFailed(
+                event -> {
+
+
+                    modelSelector.setDisable(
+                            false
+                    );
+
+
+                    analyzeButton.setDisable(
+                            true
+                    );
+
+
+                    modelSelector.setPromptText(
+                            "Unable to load models"
+                    );
+
+
+                    Throwable exception =
+                            task.getException();
+
+
+                    String error;
+
+
+                    if (
+                            exception == null ||
+                                    exception.getMessage() == null ||
+                                    exception.getMessage().isBlank()
+                    ) {
+
+                        error =
+                                "Unable to load prediction models.";
+
+                    } else {
+
+                        error =
+                                exception.getMessage();
+                    }
+
+
+                    showError(
+                            statusLabel,
+                            error
+                    );
+                }
+        );
+
+
+        // =====================================================
+        // Start Background Task
+        // =====================================================
+
+        Thread thread =
+                new Thread(
+                        task
+                );
+
+
+        thread.setDaemon(
+                true
+        );
+
+
+        thread.start();
+    }
+
+
+    // =========================================================
+    // UI prediction type -> API prediction type
+    // =========================================================
+
+    private String toApiPredictionType(
+            String value
+    ) {
+
+
+        if (
+                value == null
+        ) {
+
+            return "BOTH";
+        }
+
+
+        return switch (value) {
+
+            case "Merge Probability" ->
+                    "MERGE_PROBABILITY";
+
+            case "PR Quality" ->
+                    "PR_QUALITY";
+
+            case "Both" ->
+                    "BOTH";
+
+            default ->
+                    "BOTH";
+        };
+    }
+
+
+    // =========================================================
+    // Error Handling
+    // =========================================================
+
+    private void showError(
+            Label statusLabel,
+            String message
+    ) {
+
+
+        clearError(
+                statusLabel
+        );
+
+
+        statusLabel.setText(
+                message
+        );
+
+
+        statusLabel
+                .getStyleClass()
+                .add(
+                        "message-error"
+                );
+    }
+
+
+    private void clearError(
+            Label statusLabel
+    ) {
+
+
+        statusLabel
+                .getStyleClass()
+                .remove(
+                        "message-error"
+                );
+    }
+
+
+    // =========================================================
+    // Disable / Enable Form
+    // =========================================================
+
+    private void setFormDisabled(
+            boolean disabled,
+            Button analyzeButton,
+            ComboBox<ModelItem> modelSelector,
+            ComboBox<String> predictionType,
+            TextField githubUrlField
+    ) {
+
+
+        analyzeButton.setDisable(
+                disabled
+        );
+
+
+        modelSelector.setDisable(
+                disabled
+        );
+
+
+        predictionType.setDisable(
+                disabled
+        );
+
+
+        githubUrlField.setDisable(
+                disabled
+        );
+    }
+
+
+    // =========================================================
+    // UI-only Model Item
+    // =========================================================
+
+    private static class ModelItem {
+
+
+        private final String modelId;
+
+        private final String code;
+
+        private final String name;
+
+        private final int creditCost;
+
+
+        public ModelItem(
+                String modelId,
+                String code,
+                String name,
+                int creditCost
+        ) {
+
+            this.modelId =
+                    modelId;
+
+            this.code =
+                    code;
+
+            this.name =
+                    name;
+
+            this.creditCost =
+                    creditCost;
+        }
+
+
+        public String getModelId() {
+
+            return modelId;
+        }
+
+
+        public String getCode() {
+
+            return code;
+        }
+
+
+        public String getName() {
+
+            return name;
+        }
+
+
+        public int getCreditCost() {
+
+            return creditCost;
+        }
+
+
+        @Override
+        public String toString() {
+
+
+            String creditText;
+
+
+            if (
+                    creditCost == 1
+            ) {
+
+                creditText =
+                        "1 credit";
+
+            } else {
+
+                creditText =
+                        creditCost +
+                                " credits";
+            }
+
+
+            return name +
+                    " • " +
+                    creditText;
+        }
     }
 }
